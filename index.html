@@ -597,7 +597,7 @@ body.meditate-mode .sidebar {
           </div>
           <div id="input-line" class="prompt-line">
             <span class="prompt-prefix">root@anmol</span><span class="prompt-symbol">:~$</span>
-            <input id="cmd-input" type="text" autofocus autocomplete="off" spellcheck="false" aria-label="Terminal input"/>
+            <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal input"/>
           </div>
         </div>
       </div>
@@ -719,6 +719,10 @@ body.meditate-mode .sidebar {
 
 
 <script>
+// Prevent browser from restoring scroll position on page refresh
+if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+window.scrollTo(0, 0);
+
 // --- Update Navbar Date & Clock ---
 const navDateEl = document.getElementById('nav-date');
 const navClockEl = document.getElementById('nav-clock');
@@ -817,7 +821,11 @@ const WELCOME = `<span class="c-lavender c-bold"> Portfolio OS v1.0.0 (tty1)</sp
 `;
 printOutput('', WELCOME);
 
-document.querySelector('.terminal-card').addEventListener('click', () => cmdInput.focus());
+document.querySelector('.terminal-card').addEventListener('click', (e) => {
+  if (window.innerWidth > 900) {
+    cmdInput.focus();
+  }
+});
 
 cmdInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
@@ -961,7 +969,16 @@ function startGame() {
       jump();
     }
   };
+  
+  const touchHandler = (e) => {
+    if (!gameActive) return;
+    e.preventDefault();
+    jump();
+  };
+
   document.addEventListener('keydown', keyHandler);
+  canvas.addEventListener('touchstart', touchHandler, { passive: false });
+  canvas.addEventListener('mousedown', touchHandler);
 
   function drawDino() {
     ctx.fillStyle = '#555';
@@ -990,8 +1007,12 @@ function startGame() {
     gameActive = false;
     cancelAnimationFrame(gameLoopId);
     document.removeEventListener('keydown', keyHandler);
+    canvas.removeEventListener('touchstart', touchHandler);
+    canvas.removeEventListener('mousedown', touchHandler);
     inputLine.style.display = 'flex';
-    cmdInput.focus();
+    if (window.innerWidth > 900) {
+      cmdInput.focus();
+    }
     
     setTimeout(() => {
       let finalScoreText = `<span class="c-yellow">your score was : ${Math.floor(score)}</span>`;
@@ -1110,7 +1131,9 @@ function startMeditation() {
       setTimeout(() => {
         document.body.classList.remove('meditate-mode');
         cmdInput.disabled = false;
-        cmdInput.focus();
+        if (window.innerWidth > 900) {
+          cmdInput.focus();
+        }
         text.style.animation = 'none';
         text.textContent = 'DONE';
         printOutput('', '<span class="c-green">Meditation complete. Mind cleared.</span>');
