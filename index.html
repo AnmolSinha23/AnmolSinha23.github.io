@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Neo-brutalist interactive portfolio"/>
+<title>~/portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════════════════
+   NEO-BRUTALIST PALETTE & VARIABLES
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  --bg-blue:   #93c5fd; /* Soothing Light Blue */
+  --nav-purple:#e84118; /* Pirate Red */
+  --card-yellow:#fbc531; /* Straw Hat Yellow */
+  --card-white: #ffffff;
+  --card-black: #111111;
+  
+  --btn-green: #4cd137; /* Zoro Green */
+  --btn-red:   #e84118;
+  --btn-blue:  #00a8ff; /* Grand Line Cyan */
+
+  --black: #000000;
+  --border-thick: 4px solid var(--black);
+  --shadow-thick: 8px 8px 0px 0px var(--black);
+  --shadow-sm:    4px 4px 0px 0px var(--black);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; min-height:100vh;
+  font-family:'Outfit', sans-serif;
+  background-color: var(--bg-blue);
+  color: var(--black);
+  overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR
+   ══════════════════════════════════════════════════════════════ */
+.sidebar {
+  position: fixed; top: 32px; left: 24px; height: calc(100vh - 64px);
+  width: 220px;
+  background: var(--nav-purple);
+  border: var(--border-thick);
+  border-radius: 24px;
+  box-shadow: var(--shadow-thick);
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+  padding: 32px 16px;
+  z-index: 100;
+}
+.nav-title {
+  font-weight: 900; font-size: 28px; font-style: italic; letter-spacing: 1px;
+  color: var(--card-white);
+  text-shadow: 2px 2px 0 var(--black);
+  text-align: center;
+}
+.nav-links {
+  display: flex; flex-direction: column; gap: 16px; width: 100%;
+}
+.nav-btn {
+  width: 100%; text-align: center;
+  background: var(--card-white);
+  border: 3px solid var(--black);
+  border-radius: 25px;
+  padding: 10px 16px; font-weight: 800; font-size: 14px;
+  cursor: pointer; transition: all 0.1s;
+  text-decoration: none; color: var(--black);
+}
+.nav-btn:hover {
+  background: var(--card-yellow);
+}
+.nav-btn:active, .nav-btn.active {
+  background: var(--card-yellow);
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+.nav-date, .nav-clock {
+  background: var(--card-yellow);
+  border: 3px solid var(--black);
+  border-radius: 4px;
+  padding: 10px; font-weight: 800; font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  justify-content: center;
+  box-shadow: 4px 4px 0 var(--black);
+}
+.nav-clock { background: var(--btn-blue); color: var(--card-white); text-shadow: 2px 2px 0 var(--black); }
+.nav-date::before { content: '📅'; font-size: 14px; text-shadow: none; }
+.nav-clock::before { content: '⏰'; font-size: 14px; text-shadow: none; }
+
+/* ══════════════════════════════════════════════════════════════
+   GRID LAYOUT
+   ══════════════════════════════════════════════════════════════ */
+.dashboard {
+  margin: 40px auto;
+  padding-left: 280px;
+  padding-right: 24px;
+  width: 100%; max-width: 1480px;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 32px;
+}
+@media(max-width: 1200px) {
+  .dashboard { grid-template-columns: 1fr; }
+  .profile-card { position: relative; top: 0; }
+}
+@media(max-width: 900px) {
+  .sidebar { position: relative; width: 95%; height: auto; flex-direction: row; margin: 16px auto; top: 0; left: 0; padding: 16px; border-radius: 24px; flex-wrap: wrap; }
+  .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .nav-btn { width: auto; }
+  .dashboard { padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; width: 95%; max-width: 100%; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARDS & WIDGETS
+   ══════════════════════════════════════════════════════════════ */
+.brutal-card {
+  border: var(--border-thick);
+  box-shadow: var(--shadow-thick);
+  border-radius: 16px;
+  position: relative;
+}
+
+/* ── Left Profile Card ── */
+.flip-container {
+  position: sticky; top: 100px; height: fit-content; align-self: start;
+  perspective: 1000px;
+  width: 100%; z-index: 10;
+}
+.flipper {
+  position: relative; width: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flipper.is-flipped {
+  transform: rotateY(180deg);
+}
+.profile-card {
+  background: var(--card-white);
+  padding: 32px 24px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.front, .back {
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  position: absolute; top: 0; left: 0;
+}
+.front {
+  position: relative; 
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+.back {
+  transform: rotateY(180deg);
+  height: 100%;
+}
+.hand-grip {
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 4px; z-index: 20; align-items: flex-start;
+}
+.finger {
+  width: 22px;
+  background: #d4a373;
+  border: 3px solid var(--black);
+  border-radius: 12px 12px 6px 6px;
+  box-shadow: inset -3px -3px 0px rgba(0,0,0,0.15);
+  transform-origin: top center;
+}
+.finger:nth-child(1) { height: 36px; margin-top: 4px; }
+.finger:nth-child(2) { height: 46px; }
+.finger:nth-child(3) { height: 42px; margin-top: 2px; }
+.finger:nth-child(4) { height: 32px; margin-top: 8px; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.profile-pic {
+  width: 140px; height: 140px; border-radius: 50%;
+  border: var(--border-thick);
+  background: var(--card-white);
+  margin-bottom: 16px; object-fit: cover;
+  display: block;
+  animation: bob 0.8s steps(2, end) infinite;
+  image-rendering: pixelated;
+}
+.profile-name {
+  font-size: 32px; font-weight: 900; font-style: italic; letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.profile-title {
+  background: var(--black); color: var(--card-white);
+  padding: 4px 12px; border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.badges {
+  width: 100%; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;
+}
+.badge {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  text-align: left;
+}
+.badge span {
+  border: 2px solid var(--black);
+  padding: 2px 6px; border-radius: 4px;
+}
+.badge.yellow span { background: var(--card-yellow); }
+.badge.green span { background: var(--btn-green); }
+.badge.blue span { background: var(--btn-blue); }
+.badge.white span { background: var(--card-white); }
+
+.profile-btns {
+  width: 100%; display: flex; flex-direction: column; gap: 12px;
+}
+.btn-solid {
+  width: 100%; padding: 12px;
+  border: 3px solid var(--black);
+  border-radius: 8px;
+  font-weight: 900; font-size: 15px;
+  cursor: pointer; transition: all 0.1s;
+  box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-solid:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px 0px var(--black); }
+.btn-green { background: var(--btn-green); }
+.btn-red { background: var(--btn-red); }
+
+/* ── Right Column ── */
+.right-col {
+  display: flex; flex-direction: column; gap: 32px; padding-bottom: 64px;
+}
+.brutal-section {
+  scroll-margin-top: 100px;
+  display: flex; flex-direction: column; gap: 32px;
+}
+.section-card {
+  background: var(--card-white);
+  padding: 32px;
+}
+.section-card h2 {
+  font-size: 32px; font-weight: 900; font-style: italic; margin-bottom: 24px;
+  text-transform: uppercase; border-bottom: var(--border-thick); padding-bottom: 8px;
+}
+.section-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; margin-top: 16px; }
+.section-card p { font-size: 16px; font-weight: 600; line-height: 1.6; margin-bottom: 8px; }
+
+/* Intro Card */
+.intro-card {
+  background: var(--card-yellow);
+  padding: 32px;
+}
+.intro-card h1 {
+  font-size: 40px; font-weight: 900; font-style: italic; margin-bottom: 16px;
+}
+.intro-card p {
+  font-size: 18px; font-weight: 600; line-height: 1.6;
+}
+.hl {
+  background: var(--card-white);
+  border: 2px solid var(--black);
+  padding: 2px 8px; border-radius: 4px;
+  display: inline-block;
+  box-shadow: 2px 2px 0px var(--black);
+}
+
+/* Terminal Card */
+.terminal-card {
+  background: var(--card-black);
+  color: #fff;
+  display: flex; flex-direction: column;
+  height: 450px; overflow: hidden;
+}
+.term-titlebar {
+  background: #e2e8f0;
+  border-bottom: var(--border-thick);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+  color: var(--black); font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px;
+}
+.term-titlebar .title { flex: 1; text-align: center; }
+.dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--black); }
+.dot.r { background: var(--btn-red); }
+.dot.y { background: var(--card-yellow); }
+.dot.g { background: var(--btn-green); }
+
+#term-body {
+  flex: 1; padding: 20px; overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6;
+}
+#term-body::-webkit-scrollbar { width:8px; }
+#term-body::-webkit-scrollbar-track { background:var(--card-black); border-left: 2px solid #333; }
+#term-body::-webkit-scrollbar-thumb { background:#555; border-radius:4px; border: 2px solid var(--card-black); }
+
+.prompt-line { display:flex; align-items:center; flex-wrap:nowrap; }
+.prompt-prefix { color: #48e285; font-weight: 700; }
+.prompt-symbol { color: #fff; margin-right:8px; font-weight: 700;}
+#cmd-input {
+  flex:1; background:transparent; border:none; outline:none;
+  font:inherit; font-size:14px; color:#fff;
+  caret-color: #48e285;
+}
+.output-block { margin-bottom:12px; white-space:pre-wrap; word-break:break-word; }
+
+/* ── Syntax Colors for Terminal ── */
+.c-green   { color: #48e285; }
+.c-blue    { color: #5a9df8; }
+.c-mauve   { color: #b084f6; }
+.c-peach   { color: #ff9d5c; }
+.c-yellow  { color: #f4d03f; }
+.c-red     { color: #ff7676; }
+.c-teal    { color: #40e0d0; }
+.c-pink    { color: #ff9ff3; }
+.c-sky     { color: #48dbfb; }
+.c-lavender{ color: #a29bfe; }
+.c-dim     { color: #888888; }
+.c-sub     { color: #bbbbbb; }
+.c-bold    { font-weight: 700; }
+
+/* ══════════════════════════════════════════════════════════════
+   MEDITATE MODE
+   ══════════════════════════════════════════════════════════════ */
+body.meditate-mode .dashboard > *:not(.terminal-card),
+body.meditate-mode .sidebar {
+  filter: grayscale(100%);
+}
+.dashboard > *, .sidebar { transition: filter 0.5s ease; }
+
+.loading-bar-container {
+  width: 100%; border: 2px solid var(--btn-green); height: 24px;
+  margin-top: 12px; position: relative; overflow: hidden;
+  background: var(--card-black);
+}
+.loading-bar-fill {
+  height: 100%; background: var(--btn-green); width: 0%;
+  transition: width 1s linear;
+}
+.breathe-text {
+  position: absolute; width: 100%; text-align: center; left: 0; top: 0;
+  line-height: 20px; font-weight: 900; color: var(--card-white);
+  animation: blink 1s infinite;
+  mix-blend-mode: difference;
+}
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px) rotate(-2deg); }
+  75% { transform: translateX(8px) rotate(2deg); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODERN CSS UPGRADES
+   ══════════════════════════════════════════════════════════════ */
+/* 1. Text-box-trim */
+.btn-solid, .badge span, .nav-btn, .profile-title {
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}
+
+/* 2. Cascading Entrance Animation */
+@keyframes brutalPop {
+  0% {
+    opacity: 0;
+    transform: translate(-12px, -12px);
+    box-shadow: 0 0 0 var(--black);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0 var(--black);
+  }
+}
+#skills .badge {
+  opacity: 0;
+  animation: brutalPop 0.5s ease forwards;
+  animation-delay: calc(sibling-index() * 100ms);
+}
+
+/* 3. @starting-style */
+.output-block {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+@starting-style {
+  .output-block {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+/* 4. Construction Section */
+.construction-container {
+  background: var(--card-white); position:relative; overflow:hidden; display:flex; min-height: 400px; padding:0;
+}
+.construction-col {
+  flex: 1; padding: 32px; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative;
+}
+.construction-divider {
+  width: 4px; background: var(--black); position:relative; z-index:2;
+}
+@media(max-width: 900px) {
+  .construction-container { flex-direction: column; }
+  .construction-divider { width: 100%; height: 4px; }
+  .construction-col { min-height: 250px; }
+}
+
+/* 5. Bounce Effects */
+.btn-solid, .nav-btn, .badge, .intro-card, .terminal-card, .section-card, .profile-pic, a svg {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, background 0.2s ease, filter 0.5s ease !important;
+}
+.btn-solid:hover, .nav-btn:hover, .badge:hover, .intro-card:hover, .terminal-card:hover, .section-card:hover, .profile-pic:hover, a:hover svg {
+  transform: translateY(-6px) !important;
+}
+.btn-solid:active, .stat-link:active { transform: translate(4px, 4px) !important; box-shadow: 0px 0px 0px var(--black) !important; }
+</style>
+</head>
+<body>
+
+<!-- ERROR POPUP -->
+<div id="error-popup" class="brutal-card" style="display:none; position:fixed; top: 24px; right: 24px; z-index: 9999; background: var(--btn-red); color: var(--card-white); padding: 16px 24px; border: 4px solid var(--black); box-shadow: 8px 8px 0px 0px var(--black); font-weight: 900; font-family: 'JetBrains Mono', monospace; font-size: 14px;">
+  <span style="font-size:20px;vertical-align:middle;margin-right:8px;">⚠️</span> ERROR: Not enough Achievements / Skills found
+</div>
+
+
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="nav-title" style="font-size: 24px; line-height: 1.1;">MY LITTLE<br>CORNER</div>
+  <div class="nav-links">
+    <a href="#about" class="nav-btn">ABOUT</a>
+    <a href="#education" class="nav-btn">EDUCATION</a>
+    <a href="#skills" class="nav-btn">SKILLS</a>
+    <a href="#projects" class="nav-btn">PROJECTS</a>
+    <a href="#contact" class="nav-btn">CONTACT</a>
+  </div>
+  <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+    <div class="nav-date" id="nav-date"></div>
+    <div class="nav-clock" id="nav-clock"></div>
+  </div>
+</nav>
+
+<!-- DASHBOARD GRID -->
+<div class="dashboard">
+
+  <!-- LEFT PROFILE CARD (FLIP CONTAINER) -->
+  <div class="flip-container">
+    <div class="flipper" id="profile-flipper">
+      
+      <!-- FRONT SIDE -->
+      <div class="brutal-card profile-card front">
+        <div class="hand-grip">
+          <div class="finger"></div>
+          <div class="finger"></div>
+          <div class="finger"></div>
+          <div class="finger"></div>
+        </div>
+        <img src="red.png" class="profile-pic" alt="Pokemon Trainer Red" />
+        <div class="profile-name">ANMOL SINHA</div>
+        <div class="profile-title">FULL_FLEDGED_LEARNER()</div>
+        
+        <div class="badges">
+          <div class="badge yellow"><span>[LOCATION]</span> IIIT BHOPAL, INDIA</div>
+          <div class="badge green"><span>[STATUS]</span> 1ST YEAR BTECH STUDENT</div>
+          <div class="badge blue"><span>[MISSION]</span> figuring out</div>
+        </div>
+        
+        <div class="profile-btns" style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
+          <button id="resume-btn" class="btn-solid btn-green">⬇ DOWNLOAD_RESUME</button>
+          <button id="contact-btn-profile" class="btn-solid btn-red">✉ CONTACT ME</button>
+          <button id="flip-to-stats-btn" class="btn-solid btn-yellow" style="font-weight: 900;">🎲 VIEW STATS</button>
+        </div>
+      </div>
+
+      <!-- BACK SIDE (STATS) -->
+      <div class="brutal-card profile-card back">
+        <div class="hand-grip">
+          <div class="finger"></div>
+          <div class="finger"></div>
+          <div class="finger"></div>
+          <div class="finger"></div>
+        </div>
+        <h2 style="font-size:24px; font-weight:900; font-style:italic; border-bottom:4px solid var(--black); padding-bottom:8px; width:100%; text-align:center; margin-bottom: 16px;">ANMOL SINHA</h2>
+        <img src="red.png" class="profile-pic" alt="Pokemon Trainer Red" style="animation:none; width:100px; height:100px; margin-bottom: 24px;" />
+        
+        <div class="profile-title" style="margin-bottom:16px;">COMPETITIVE PROFILES</div>
+        
+        <div style="width: 100%; text-align: left; display:flex; flex-direction:column; gap:12px; margin-bottom: 24px; flex-grow: 1;">
+          <!-- LeetCode -->
+          <a href="https://leetcode.com/u/o7t4K3Sz7N/" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#FFA116"><path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.115-.702-1.823s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.055 5.055 0 0 0-2.445-1.337l2.467-2.503c.513-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038l-10.1 10.101c-.981.982-1.494 2.337-1.494 3.833s.513 2.851 1.494 3.833l4.332 4.363c.981.981 2.338 1.482 3.833 1.482s2.853-.501 3.833-1.482l2.697-2.607c.514-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038z"/></svg>
+            LeetCode
+            <span style="margin-left:auto; font-size:18px;">↗</span>
+          </a>
+          
+          <!-- Codeforces -->
+          <a href="https://codeforces.com/profile/anmolsinha.edu" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none"><rect x="13.5" y="4" width="3.5" height="16" fill="#F44336"/><rect x="8.5" y="11" width="3.5" height="9" fill="#2196F3"/><rect x="18.5" y="13" width="3.5" height="7" fill="#FFC107"/></svg>
+            Codeforces
+            <span style="margin-left:auto; font-size:18px;">↗</span>
+          </a>
+
+          <!-- CodeChef -->
+          <a href="https://www.codechef.com/users/anmol_ssinha" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#5b4434"><path d="M12 2C9 2 6 4 6 7c0 1.2.6 2.3 1.5 3.1-.2.5-.3 1.1-.3 1.7 0 3 3 5.4 6 5.8v2.4h-2v2h6v-2h-2v-2.4c3-.4 6-2.8 6-5.8 0-.6-.1-1.2-.3-1.7C19.4 9.3 20 8.2 20 7c0-3-3-5-8-5zm0 2c3.5 0 6 1.5 6 3 0 .8-.5 1.5-1.2 2-.8-.4-1.8-.7-2.8-.7V7.5C14 6.7 13.1 6 12 6s-2 .7-2 1.5v.8c-1 .1-2 .4-2.8.7C6.5 8.5 6 7.8 6 7c0-1.5 2.5-3 6-3z"/></svg>
+            CodeChef
+            <span style="margin-left:auto; font-size:18px;">↗</span>
+          </a>
+
+          <!-- Chess.com -->
+          <a href="https://www.chess.com/member/gameyguys/stats/rapid" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#7FA650"><path d="M12 2C10.3 2 9 3.3 9 5c0 1.2.7 2.2 1.7 2.7l-1.4 5.3H8v2h8v-2h-1.3l-1.4-5.3c1-.5 1.7-1.5 1.7-2.7 0-1.7-1.3-3-3-3zM7 17h10v2H7v-2zm-2 3h14v2H5v-2z"/></svg>
+            Chess.com
+            <span style="margin-left:auto; font-size:18px;">↗</span>
+          </a>
+        </div>
+
+        <button id="flip-back-btn" class="btn-solid btn-blue" style="width: 100%; font-weight: 900;">🔙 GO BACK</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+    
+    <!-- ABOUT SECTION -->
+    <section id="about" class="brutal-section">
+      <!-- INTRO CARD -->
+      <div class="brutal-card intro-card">
+        <h1 id="typewriter-h1"></h1>
+        <p id="typewriter-p" style="min-height: 100px; line-height: 1.6;"></p>
+      </div>
+
+      <!-- TERMINAL CARD -->
+      <div class="brutal-card terminal-card">
+        <div class="term-titlebar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="title">root@anmol:~</div>
+        </div>
+        <div id="term-body">
+          <div class="output-block" style="display: flex; gap: 16px; margin-bottom: 16px; align-items: center; justify-content: center;">
+            <pre style="color: #51a2da; font-family: monospace; font-weight: bold; font-size: 11px; line-height: 1.15; margin: 0; padding-right: 16px;">
+        /:-------------:\
+     :-------------------::
+   :-----------/shhOHbmp---:\
+ /-----------omMMMNNNMMD  ---:
+:-----------sMMMMNMNMP.    ---:
+:-----------:MMMdP-------    ---\
+,------------:MMMd--------    ---:
+:------------:MMMd-------    .---:
+:----    oNMMMMMMMMMNho     .----:
+:--     .+shhhDDDhhhhy++   .------/
+:-    -------:MMMd--------------:
+:-   --------/MMMd-------------;
+:-    ------/hMMMy------------:
+:-- :dMNdhhdNMMNo------------;
+:---:sdNMMMMNds:------------:
+            </pre>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; color: #fff;">
+              <span style="color: #51a2da; font-weight: bold; font-size: 15px;">root@portfolio-exp</span><br>
+              <span class="c-dim">OS:</span> Fedora Linux 44 (KDE Plasma fan)<br>
+              <span class="c-dim">Host:</span> portfolio-exp<br>
+              <span class="c-dim">Kernel:</span> 6.13.0-fc44.x86_64<br>
+              <span class="c-dim">Shell:</span> bash 5.2.26<br><br>
+              Type <span class="c-green">help</span> to begin.
+            </div>
+          </div>
+          <div id="input-line" class="prompt-line">
+            <span class="prompt-prefix">root@anmol</span><span class="prompt-symbol">:~$</span>
+            <input id="cmd-input" type="text" autofocus autocomplete="off" spellcheck="false" aria-label="Terminal input"/>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION SECTION -->
+    <section id="education" class="brutal-section">
+      <div class="brutal-card section-card" style="background: #a29bfe;">
+        <h2>Education</h2>
+        <div class="badge yellow" style="display:inline-flex;margin-bottom:12px;"><span>B.Tech in Computer Science</span></div>
+        <h3>IIIT BHOPAL</h3>
+        <p><strong>Year:</strong> 1st Year (Expected Grad: 2029)</p>
+        <p><strong>Class 10th (CBSE):</strong> 99.4%</p>
+        <p><strong>Class 12th (CBSE):</strong> 86.4% <em>(Crazy downfall ik !)</em></p>
+        <p><strong>Coursework:</strong> Data Structures & Algorithms, Discrete Mathematics, Operating Systems, Computer Networks</p>
+      </div>
+    </section>
+
+    <!-- SKILLS SECTION -->
+    <section id="skills" class="brutal-section">
+      <div class="brutal-card section-card" style="background: #48e285;">
+        <h2>Skills</h2>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; font-weight:700;">
+           <span class="badge white"><span>C++ (Primary)</span></span>
+           <span class="badge white"><span>Python</span></span>
+           <span class="badge white"><span>JavaScript</span></span>
+           <span class="badge white"><span>SQL</span></span>
+           <span class="badge white"><span>Git / GitHub</span></span>
+           <span class="badge white"><span>Linux (Arch)</span></span>
+        </div>
+        
+        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="background: #e84118; color: #fbc531; padding: 10px 20px; font-weight: 900; font-size: 18px; border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--black); border-radius: 8px;">
+              Current Typing Speed : 114 WPM avg
+            </div>
+            <a href="https://monkeytype.com/" target="_blank" class="btn-solid" style="background: #fbc531; color: var(--black); text-decoration: none; display: flex; align-items: center; justify-content: center; width: auto; padding: 8px 16px;">
+              test yours : ↗
+            </a>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="background: #e84118; color: #fbc531; padding: 10px 20px; font-weight: 900; font-size: 18px; border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--black); border-radius: 8px;">
+              Highest Typing Speed (1 min) : 132 WPM
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS & EXPERIENCE SECTION -->
+    <section id="projects" class="brutal-section">
+      <div class="brutal-card construction-container">
+        
+        <!-- Background Stick Diagram -->
+        <svg style="position:absolute; inset:0; width:100%; height:100%; opacity:0.15; pointer-events:none;" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
+          <!-- Crane -->
+          <line x1="150" y1="400" x2="150" y2="100" stroke="#000" stroke-width="8"/>
+          <line x1="50" y1="100" x2="350" y2="100" stroke="#000" stroke-width="8"/>
+          <line x1="150" y1="150" x2="200" y2="100" stroke="#000" stroke-width="4"/>
+          <line x1="300" y1="100" x2="300" y2="250" stroke="#000" stroke-width="2" stroke-dasharray="6 6"/>
+          <rect x="280" y="250" width="40" height="20" fill="none" stroke="#000" stroke-width="4"/>
+          <circle cx="150" cy="100" r="10" fill="#000"/>
+          
+          <!-- Scaffolding -->
+          <line x1="550" y1="400" x2="550" y2="200" stroke="#000" stroke-width="6"/>
+          <line x1="650" y1="400" x2="650" y2="200" stroke="#000" stroke-width="6"/>
+          <line x1="750" y1="400" x2="750" y2="200" stroke="#000" stroke-width="6"/>
+          <line x1="500" y1="350" x2="800" y2="350" stroke="#000" stroke-width="4"/>
+          <line x1="500" y1="280" x2="800" y2="280" stroke="#000" stroke-width="4"/>
+          <line x1="500" y1="210" x2="800" y2="210" stroke="#000" stroke-width="4"/>
+          <line x1="550" y1="400" x2="650" y2="350" stroke="#000" stroke-width="2"/>
+          <line x1="650" y1="400" x2="550" y2="350" stroke="#000" stroke-width="2"/>
+          <line x1="650" y1="350" x2="750" y2="280" stroke="#000" stroke-width="2"/>
+          <line x1="750" y1="350" x2="650" y2="280" stroke="#000" stroke-width="2"/>
+        </svg>
+
+        <!-- Left Column: Projects -->
+        <div class="construction-col">
+          <h2 style="position:absolute; top:32px; left:32px; font-size:32px; font-weight:900; font-style:italic; text-transform:uppercase; border-bottom:4px solid var(--black); padding-bottom:8px; margin:0;">Projects</h2>
+          <div style="background:var(--btn-red); border:4px solid var(--black); padding:16px 32px; transform:rotate(-5deg); box-shadow:8px 8px 0 var(--black); z-index:10; margin-top:40px;">
+            <h3 style="margin:0; font-size:24px; color:var(--card-white); text-transform:uppercase; font-weight:900;">Under Construction</h3>
+          </div>
+        </div>
+
+        <!-- Vertical Divider -->
+        <div class="construction-divider"></div>
+
+        <!-- Right Column: Experience -->
+        <div class="construction-col">
+          <h2 style="position:absolute; top:32px; left:32px; font-size:32px; font-weight:900; font-style:italic; text-transform:uppercase; border-bottom:4px solid var(--black); padding-bottom:8px; margin:0;">Experience</h2>
+          <div style="background:var(--card-yellow); border:4px solid var(--black); padding:16px 32px; transform:rotate(3deg); box-shadow:8px 8px 0 var(--black); z-index:10; margin-top:40px;">
+            <h3 style="margin:0; font-size:24px; color:var(--black); text-transform:uppercase; font-weight:900;">In Progress</h3>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="brutal-section">
+      <div class="brutal-card section-card" style="background: #f4d03f; text-align:center;">
+        <h2>Contact Me</h2>
+        <p style="font-size:18px; margin-bottom: 24px;">Let's build something awesome together.</p>
+        <button id="contact-btn-main" class="btn-solid btn-blue" style="max-width:300px; margin: 0 auto;">✉ Send me an Email</button>
+        <div style="display:flex; justify-content:center; gap:32px; margin-top:32px;">
+          <a href="https://github.com/AnmolSinha23" target="_blank" aria-label="GitHub" style="color:var(--black);">
+            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" onmouseover="this.style.transform='scale(1.2) translateY(-4px)'" onmouseout="this.style.transform='scale(1)'" style="transition:transform 0.2s; cursor:pointer;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/anmol-sinha-4a2b391b7" target="_blank" aria-label="LinkedIn" style="color:var(--black);">
+            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" onmouseover="this.style.transform='scale(1.2) translateY(-4px)'" onmouseout="this.style.transform='scale(1)'" style="transition:transform 0.2s; cursor:pointer;"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+
+<script>
+// --- Update Navbar Date & Clock ---
+const navDateEl = document.getElementById('nav-date');
+const navClockEl = document.getElementById('nav-clock');
+
+function updateSidebarTime() {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2, '0');
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const yy = String(now.getFullYear()).slice(-2);
+  navDateEl.textContent = `${dd}/${mm}/${yy}`;
+  
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mins = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  navClockEl.textContent = `${hh}:${mins}:${ss}`;
+}
+updateSidebarTime();
+setInterval(updateSidebarTime, 1000);
+
+// --- Terminal Engine & Data ---
+const portfolioData = {
+  // ─── HELP ──────────────────────────────────────────────────────────
+  "help": `
+<span class="c-mauve c-bold">Available Commands</span>  <span class="c-dim">──────────────────────────────</span>
+
+  <span class="c-green">education</span>             <span class="c-dim">│</span>  University & coursework
+  <span class="c-green">skills</span>                <span class="c-dim">│</span>  Technical stack & tools
+  <span class="c-green">current_status</span>        <span class="c-dim">│</span>  What I'm doing now
+  <span class="c-green">meditate</span>              <span class="c-dim">│</span>  Take a breather
+  <span class="c-green">game</span>                  <span class="c-dim">│</span>  The legendary dino
+  <span class="c-green">sudo</span>                  <span class="c-dim">│</span>  ???
+  <span class="c-green">clear</span>                 <span class="c-dim">│</span>  Clear the terminal
+  <span class="c-green">help</span>                  <span class="c-dim">│</span>  Show this message
+`,
+
+  // ─── EDUCATION ─────────────────────────────────────────────────────
+  "education": `
+<span class="c-peach c-bold">📚 education</span>
+<span class="c-dim">───────────────────────────────────────</span>
+
+  <span class="c-blue c-bold">University</span>    <span class="c-dim">│</span>  IIIT BHOPAL
+  <span class="c-blue c-bold">Degree</span>        <span class="c-dim">│</span>  B.Tech in Computer Science
+  <span class="c-blue c-bold">Year</span>          <span class="c-dim">│</span>  1st Year (Expected Grad: 2029)
+
+<span class="c-teal c-bold">  Academic Performance:</span>
+  <span class="c-dim">├──</span> Class 10th (CBSE): 99.4%
+  <span class="c-dim">└──</span> Class 12th (CBSE): 86.4% <span class="c-red">(Crazy downfall ik !)</span>
+
+<span class="c-teal c-bold">  Current Coursework:</span>
+  <span class="c-dim">├──</span> Data Structures & Algorithms
+  <span class="c-dim">├──</span> Discrete Mathematics
+  <span class="c-dim">├──</span> Operating Systems
+  <span class="c-dim">└──</span> Computer Networks
+`,
+
+  // ─── SKILLS ────────────────────────────────────────────────────────
+  "skills": `
+<span class="c-peach c-bold">🛠️  skills</span>
+<span class="c-dim">───────────────────────────────────────</span>
+
+  <span class="c-mauve c-bold">Languages</span>
+  <span class="c-dim">├──</span> <span class="c-green c-bold">C++ (primary)</span>  — STL, templates, competitive prog
+  <span class="c-dim">├──</span> Python — scripting, automation
+  <span class="c-dim">├──</span> JavaScript — web projects
+  <span class="c-dim">└──</span> SQL — database design
+
+  <span class="c-mauve c-bold">Frameworks & Tools</span>
+  <span class="c-dim">├──</span> Git / GitHub
+  <span class="c-dim">├──</span> Linux (btw, I use Arch)
+  <span class="c-dim">├──</span> Docker (basics)
+  <span class="c-dim">└──</span> VS Code
+
+  <span class="c-mauve c-bold">Focus Areas</span>
+  <span class="c-dim">├──</span> Competitive Programming
+  <span class="c-dim">├──</span> Systems Programming
+  <span class="c-dim">└──</span> Open Source
+`,
+
+  // ─── CURRENT STATUS ────────────────────────────────────────────────
+  "current_status": `
+<span class="c-red c-bold">(BREAKING NEWS) :  Breaking Bad on the run, after that Better Caul Saul is on the line</span>
+the current things being studied will be shown here
+<span class="c-dim">^ ^ ^ ^ ^</span>
+`
+};
+
+const termBody  = document.getElementById('term-body');
+const cmdInput  = document.getElementById('cmd-input');
+const inputLine = document.getElementById('input-line');
+
+const history = [];
+let histIdx = -1;
+
+const WELCOME = `<span class="c-lavender c-bold"> Portfolio OS v1.0.0 (tty1)</span>
+<span class="c-dim"> Type </span><span class="c-green">help</span><span class="c-dim"> to see available commands.</span>
+`;
+printOutput('', WELCOME);
+
+document.querySelector('.terminal-card').addEventListener('click', () => cmdInput.focus());
+
+cmdInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const raw = cmdInput.value;
+    const cmd = raw.trim().toLowerCase();
+    cmdInput.value = '';
+    if (cmd) { history.push(raw); histIdx = history.length; }
+    processCommand(cmd, raw);
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (histIdx > 0) { histIdx--; cmdInput.value = history[histIdx]; }
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (histIdx < history.length - 1) { histIdx++; cmdInput.value = history[histIdx]; }
+    else { histIdx = history.length; cmdInput.value = ''; }
+  }
+});
+
+let awaitingPlayerName = false;
+let awaitingGameConfirm = false;
+let gameActive = false;
+let currentPlayer = "";
+
+function processCommand(cmd, raw) {
+  if (awaitingPlayerName) {
+    currentPlayer = raw.trim();
+    if (currentPlayer) {
+      let players = JSON.parse(localStorage.getItem('dino_players') || '[]');
+      players.push({ name: currentPlayer, date: new Date().toLocaleString() });
+      localStorage.setItem('dino_players', JSON.stringify(players));
+    }
+    
+    awaitingPlayerName = false;
+    awaitingGameConfirm = true;
+    printOutput(raw, `<span class="c-dim">it will be remembered young lad</span>\n\nThe legendary dino game has been called upon would you like to start y/n\n<span class="c-yellow">If you beat the high score of 10,000 something special is waiting for you, who knows it might be a lot of money (from my standards)</span>`);
+    return;
+  }
+
+  if (awaitingGameConfirm) {
+    if (cmd === 'y' || cmd === 'yes') {
+      printOutput(raw, `<span class="c-green">Starting the legendary dino game...</span>`);
+      startGame();
+    } else {
+      printOutput(raw, `<span class="c-dim">Game cancelled.</span>`);
+    }
+    awaitingGameConfirm = false;
+    return;
+  }
+
+  if (cmd === 'game') {
+    awaitingPlayerName = true;
+    printOutput(raw, `what is your name daring lad :`);
+    return;
+  }
+
+  if (cmd === 'clear') {
+    termBody.querySelectorAll('.output-block').forEach(el => el.remove());
+    scrollToBottom();
+    return;
+  }
+  if (cmd === 'meditate') {
+    printOutput(raw, '<span class="c-dim">Starting meditation session…</span>');
+    startMeditation();
+    return;
+  }
+  if (cmd === 'sudo' || cmd.startsWith('sudo ')) {
+    printOutput(raw, `<span class="c-red c-bold">🚨 police is on the way my lad!</span>`);
+    return;
+  }
+  if (portfolioData[cmd]) {
+    printOutput(raw, portfolioData[cmd]);
+    return;
+  }
+  printOutput(raw, `<span class="c-red">command not found:</span> ${escapeHtml(raw)}\n<span class="c-dim">Type </span><span class="c-green">help</span><span class="c-dim"> for available commands.</span>`);
+}
+
+function printOutput(echoCmd, html) {
+  const block = document.createElement('div');
+  block.className = 'output-block';
+  if (echoCmd) {
+    block.innerHTML = `<div class="cmd-echo"><span class="prompt-prefix">root@anmol</span><span class="prompt-symbol">:~$</span> ${escapeHtml(echoCmd)}</div>` + html;
+  } else {
+    block.innerHTML = html;
+  }
+  termBody.insertBefore(block, inputLine);
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  requestAnimationFrame(() => { termBody.scrollTop = termBody.scrollHeight; });
+}
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function startGame() {
+  gameActive = true;
+  inputLine.style.display = 'none';
+  
+  const canvas = document.createElement('canvas');
+  canvas.width = 600;
+  canvas.height = 150;
+  canvas.style.border = '2px solid var(--black)';
+  canvas.style.background = '#fff';
+  canvas.style.marginTop = '16px';
+  canvas.style.borderRadius = '4px';
+  canvas.style.boxShadow = '4px 4px 0 var(--black)';
+  canvas.style.maxWidth = '100%';
+  canvas.style.height = 'auto';
+  
+  const block = document.createElement('div');
+  block.className = 'output-block';
+  block.appendChild(canvas);
+  termBody.insertBefore(block, inputLine);
+  scrollToBottom();
+
+  const ctx = canvas.getContext('2d');
+  
+  let dino = { x: 50, y: 100, width: 20, height: 20, dy: 0, gravity: 0.6, jumpPower: -10, isJumping: false };
+  let obstacles = [];
+  let score = 0;
+  let gameLoopId;
+  let frames = 0;
+  let spawnTimer = 0;
+
+  function jump() {
+    if (!dino.isJumping && gameActive) {
+      dino.dy = dino.jumpPower;
+      dino.isJumping = true;
+    }
+  }
+
+  const keyHandler = (e) => {
+    if (!gameActive) return;
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+      e.preventDefault();
+      jump();
+    }
+  };
+  document.addEventListener('keydown', keyHandler);
+
+  function drawDino() {
+    ctx.fillStyle = '#555';
+    ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+  }
+
+  function drawObstacles() {
+    obstacles.forEach(obs => {
+      if (obs.type === 'crow') {
+        ctx.fillStyle = '#000'; // black
+        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+      } else {
+        ctx.fillStyle = '#4cd137'; // btn-green
+        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+      }
+    });
+  }
+
+  function drawScore() {
+    ctx.fillStyle = '#000';
+    ctx.font = '16px "JetBrains Mono"';
+    ctx.fillText(`Score: ${Math.floor(score)}`, 450, 30);
+  }
+
+  function gameOver() {
+    gameActive = false;
+    cancelAnimationFrame(gameLoopId);
+    document.removeEventListener('keydown', keyHandler);
+    inputLine.style.display = 'flex';
+    cmdInput.focus();
+    
+    setTimeout(() => {
+      let finalScoreText = `<span class="c-yellow">your score was : ${Math.floor(score)}</span>`;
+      if (score >= 10000) {
+        printOutput('', `<br>${finalScoreText}<br>🎉 <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style="color:var(--btn-green); font-weight:bold; text-decoration:underline; font-size: 16px;">10 dollar giftcard</a> 🎉`);
+      } else {
+        printOutput('', `<br>${finalScoreText}<br><span class="c-red">You are not the chosen one I believe</span>`);
+      }
+    }, 500);
+  }
+
+  function update() {
+    if (!gameActive) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Dino physics
+    dino.dy += dino.gravity;
+    dino.y += dino.dy;
+    
+    if (dino.y + dino.height >= 130) {
+      dino.y = 130 - dino.height;
+      dino.dy = 0;
+      dino.isJumping = false;
+    }
+    
+    // Draw ground
+    ctx.beginPath();
+    ctx.moveTo(0, 130);
+    ctx.lineTo(600, 130);
+    ctx.strokeStyle = '#000';
+    ctx.stroke();
+
+    // Obstacles
+    spawnTimer++;
+    let currentSpeed = 6 + (score / 2500);
+    let spawnThreshold = Math.max(35, 90 - Math.floor(score / 150));
+    
+    if (spawnTimer >= spawnThreshold) {
+      spawnTimer = 0;
+      let isCrow = score > 2000 && Math.random() < 0.35;
+      if (isCrow) {
+        let crowY = Math.random() < 0.5 ? 110 : 80;
+        obstacles.push({ x: 600, y: crowY, width: 20, height: 15, type: 'crow' });
+      } else {
+        let obsWidth = 15 + Math.random() * 15;
+        obstacles.push({ x: 600, y: 130 - 30, width: obsWidth, height: 30, type: 'cactus' });
+      }
+    }
+    
+    for (let i = 0; i < obstacles.length; i++) {
+      let obs = obstacles[i];
+      obs.x -= currentSpeed;
+      
+      // Collision
+      if (dino.x < obs.x + obs.width &&
+          dino.x + dino.width > obs.x &&
+          dino.y < obs.y + obs.height &&
+          dino.height + dino.y > obs.y) {
+        drawDino();
+        drawObstacles();
+        gameOver();
+        return;
+      }
+    }
+    
+    // Clean up passed obstacles
+    obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
+
+    let scoreIncrease = 10;
+    if (score >= 8600) {
+      let tier = Math.floor((score - 8600) / 200) + 1;
+      scoreIncrease = 10 / Math.pow(2, tier);
+      if (scoreIncrease < 0.005) {
+        scoreIncrease = 0.005; // Absolute minimum bearable rate
+      }
+    }
+    score += scoreIncrease;
+    
+    drawDino();
+    drawObstacles();
+    drawScore();
+    
+    frames++;
+    gameLoopId = requestAnimationFrame(update);
+  }
+  
+  update();
+}
+
+function startMeditation() {
+  document.body.classList.add('meditate-mode');
+  const block = document.createElement('div');
+  block.className = 'output-block';
+  block.innerHTML = `
+    <div class="loading-bar-container">
+      <div class="loading-bar-fill"></div>
+      <div class="breathe-text">BREATHE</div>
+    </div>
+  `;
+  termBody.insertBefore(block, inputLine);
+  scrollToBottom();
+  
+  cmdInput.disabled = true;
+  
+  const fill = block.querySelector('.loading-bar-fill');
+  const text = block.querySelector('.breathe-text');
+  let progress = 0;
+  
+  fill.style.width = '0%';
+  
+  const interval = setInterval(() => {
+    progress += 10;
+    fill.style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.body.classList.remove('meditate-mode');
+        cmdInput.disabled = false;
+        cmdInput.focus();
+        text.style.animation = 'none';
+        text.textContent = 'DONE';
+        printOutput('', '<span class="c-green">Meditation complete. Mind cleared.</span>');
+      }, 1000);
+    }
+  }, 1000);
+}
+
+
+// --- Scrollspy ---
+const sections = document.querySelectorAll('.brutal-section');
+const navLinks = document.querySelectorAll('.nav-btn');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (window.scrollY >= (sectionTop - 250)) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${current}`) {
+      link.classList.add('active');
+    }
+  });
+});
+window.dispatchEvent(new Event('scroll'));
+
+// --- Interactive Buttons Logic ---
+function handleEmailClick(btn) {
+  const email = "anmol23sinha@gmail.com";
+  if (btn.dataset.state === "revealed") {
+    navigator.clipboard.writeText(email).catch(err => console.error('Clipboard copy failed:', err));
+    const previousHtml = btn.innerHTML;
+    btn.innerHTML = `✅ Copied!`;
+    btn.style.background = "var(--btn-green)";
+    setTimeout(() => {
+      btn.innerHTML = previousHtml;
+      btn.style.background = "";
+    }, 2000);
+  } else {
+    btn.dataset.state = "revealed";
+    btn.innerHTML = `${email} <span style="font-size:18px; margin-left:6px;" title="Copy to clipboard">📋</span>`;
+  }
+}
+
+document.getElementById('contact-btn-profile').addEventListener('click', function() { handleEmailClick(this); });
+document.getElementById('contact-btn-main').addEventListener('click', function() { handleEmailClick(this); });
+
+document.getElementById('resume-btn').addEventListener('click', () => {
+  const popup = document.getElementById('error-popup');
+  popup.style.display = 'block';
+  popup.style.animation = 'none'; 
+  void popup.offsetWidth; // trigger reflow to restart animation
+  popup.style.animation = 'shake 0.3s ease-in-out';
+  setTimeout(() => popup.style.display = 'none', 3000);
+});
+
+// --- Flip Card Logic ---
+const profileFlipper = document.getElementById('profile-flipper');
+document.getElementById('flip-to-stats-btn').addEventListener('click', () => {
+  profileFlipper.classList.add('is-flipped');
+});
+document.getElementById('flip-back-btn').addEventListener('click', () => {
+  profileFlipper.classList.remove('is-flipped');
+});
+
+// --- Typewriter Animation ---
+const hiText = "Hi people! 👋";
+const typeH1 = document.getElementById('typewriter-h1');
+let typeIndex = 0;
+
+const pTextRaw = `I'm a [1st-year student at IIIT Bhopal] who picks up skills the way some people pick up hobbies — fast, randomly, and always starting with "how hard can it be?" Turns out, [pretty hard] — but honestly, that's kind of the point.`;
+const typeP = document.getElementById('typewriter-p');
+let typeIndexP = 0;
+let currentHTML = "";
+
+function typeWriterP() {
+  if (typeIndexP < pTextRaw.length) {
+    let char = pTextRaw.charAt(typeIndexP);
+    if (char === '[') {
+      currentHTML += `<span class="hl">[`;
+    } else if (char === ']') {
+      currentHTML += `]</span>`;
+    } else {
+      currentHTML += char;
+    }
+    typeP.innerHTML = currentHTML;
+    typeIndexP++;
+    setTimeout(typeWriterP, 25);
+  }
+}
+
+function typeWriter() {
+  if (typeIndex < hiText.length) {
+    if (hiText.codePointAt(typeIndex) > 0xFFFF) {
+      typeH1.textContent += String.fromCodePoint(hiText.codePointAt(typeIndex));
+      typeIndex += 2;
+    } else {
+      typeH1.textContent += hiText.charAt(typeIndex);
+      typeIndex++;
+    }
+    setTimeout(typeWriter, 80);
+  } else {
+    setTimeout(typeWriterP, 300);
+  }
+}
+window.addEventListener('load', typeWriter);
+</script>
+</body>
+</html>
