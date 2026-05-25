@@ -109,13 +109,28 @@ html, body {
 }
 @media(max-width: 1200px) {
   .dashboard { grid-template-columns: 1fr; }
-  .profile-card { position: relative; top: 0; }
+  .flip-container { position: relative; top: 0; }
 }
 @media(max-width: 900px) {
-  .sidebar { position: relative; width: 95%; height: auto; flex-direction: row; margin: 16px auto; top: 0; left: 0; padding: 16px; border-radius: 24px; flex-wrap: wrap; }
-  .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-  .nav-btn { width: auto; }
+  .sidebar { position: relative; width: 95%; height: auto; flex-direction: row; margin: 16px auto; top: 0; left: 0; padding: 16px; border-radius: 24px; flex-wrap: wrap; justify-content: center; }
+  .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; width: 100%; }
+  .nav-btn { width: auto; flex: 1 1 calc(33% - 16px); min-width: 100px; }
   .dashboard { padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; width: 95%; max-width: 100%; }
+}
+@media(max-width: 600px) {
+  .nav-title { font-size: 20px; }
+  .nav-btn { flex: 1 1 45%; font-size: 12px; padding: 8px; }
+  .profile-pic { width: 100px; height: 100px; margin-bottom: 8px; }
+  .profile-name { font-size: 24px; }
+  .section-card { padding: 20px; }
+  .intro-card { padding: 20px; }
+  .intro-card h1 { font-size: 28px; }
+  .intro-card p { font-size: 16px; }
+  .terminal-card { height: 500px; }
+  #term-body pre { font-size: 7px !important; }
+  .badge { font-size: 11px; flex-wrap: wrap; }
+  .btn-solid { font-size: 13px; padding: 10px; }
+  .flipper.is-flipped .back h2 { font-size: 20px !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -550,8 +565,8 @@ body.meditate-mode .sidebar {
           <div class="title">root@anmol:~</div>
         </div>
         <div id="term-body">
-          <div class="output-block" style="display: flex; gap: 16px; margin-bottom: 16px; align-items: center; justify-content: center;">
-            <pre style="color: #51a2da; font-family: monospace; font-weight: bold; font-size: 11px; line-height: 1.15; margin: 0; padding-right: 16px;">
+          <div class="output-block" style="display: flex; gap: 16px; margin-bottom: 16px; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <pre style="color: #51a2da; font-family: monospace; font-weight: bold; font-size: 11px; line-height: 1.15; margin: 0; padding-right: 16px; max-width: 100%; overflow-x: auto;">
         /:-------------:\
      :-------------------::
    :-----------/shhOHbmp---:\
