@@ -720,7 +720,7 @@ body.meditate-mode .sidebar {
 
 <script>
 // Prevent browser from restoring scroll position on page refresh
-if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+if ('scrollRestoration' in window.history) { window.history.scrollRestoration = 'manual'; }
 window.scrollTo(0, 0);
 
 // --- Update Navbar Date & Clock ---
@@ -746,16 +746,16 @@ setInterval(updateSidebarTime, 1000);
 const portfolioData = {
   // ─── HELP ──────────────────────────────────────────────────────────
   "help": `
-<span class="c-mauve c-bold">Available Commands</span>  <span class="c-dim">──────────────────────────────</span>
+<span class="c-mauve c-bold">Available Commands</span> <span class="c-dim">──────────────</span>
 
-  <span class="c-green">education</span>             <span class="c-dim">│</span>  University & coursework
-  <span class="c-green">skills</span>                <span class="c-dim">│</span>  Technical stack & tools
-  <span class="c-green">current_status</span>        <span class="c-dim">│</span>  What I'm doing now
-  <span class="c-green">meditate</span>              <span class="c-dim">│</span>  Take a breather
-  <span class="c-green">game</span>                  <span class="c-dim">│</span>  The legendary dino
-  <span class="c-green">sudo</span>                  <span class="c-dim">│</span>  ???
-  <span class="c-green">clear</span>                 <span class="c-dim">│</span>  Clear the terminal
-  <span class="c-green">help</span>                  <span class="c-dim">│</span>  Show this message
+  <span class="c-green">education</span>      <span class="c-dim">│</span>  University
+  <span class="c-green">skills</span>         <span class="c-dim">│</span>  Tech stack
+  <span class="c-green">current_status</span> <span class="c-dim">│</span>  What I'm doing
+  <span class="c-green">meditate</span>       <span class="c-dim">│</span>  Take a breather
+  <span class="c-green">game</span>           <span class="c-dim">│</span>  Dino game
+  <span class="c-green">sudo</span>           <span class="c-dim">│</span>  ???
+  <span class="c-green">clear</span>          <span class="c-dim">│</span>  Clear terminal
+  <span class="c-green">help</span>           <span class="c-dim">│</span>  Show this
 `,
 
   // ─── EDUCATION ─────────────────────────────────────────────────────
