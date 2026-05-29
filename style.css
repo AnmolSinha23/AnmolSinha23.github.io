@@ -457,41 +457,82 @@ body.meditate-mode .sidebar {
 
 /* --- ACHIEVEMENT TOAST SYSTEM --- */
 #toast-container {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  z-index: 10000;
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 12px; z-index: 10000;
   pointer-events: none;
 }
 .toast {
   background: var(--card-yellow);
-  border: var(--border-thick);
-  box-shadow: 6px 6px 0px 0px var(--black);
+  border: 4px solid var(--black);
+  box-shadow: 6px 6px 0 var(--black);
   padding: 16px 20px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  display: flex; align-items: center; gap: 16px;
   font-family: 'Outfit', sans-serif;
-  color: var(--black);
-  transform: translateX(120%);
   opacity: 0;
+  transform: translateY(20px) scale(0.95);
   animation: slideInToast 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.15) forwards, slideOutToast 0.5s ease 4.5s forwards;
-  pointer-events: auto;
 }
-.toast .icon { font-size: 28px; }
-.toast .content { display: flex; flex-direction: column; line-height: 1.3; }
-.toast .title { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--btn-red); letter-spacing: 0.5px; }
-.toast .message { font-size: 16px; font-weight: 900; }
+.toast .icon { font-size: 32px; }
+.toast .title { font-weight: 900; font-size: 14px; text-transform: uppercase; margin-bottom: 4px; }
+.toast .message { font-size: 16px; font-weight: 600; }
 
 @keyframes slideInToast {
-  to { transform: translateX(0); opacity: 1; }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes slideOutToast {
-  to { transform: translateX(120%); opacity: 0; }
+  to { opacity: 0; transform: translateY(20px) scale(0.95); }
+}
+
+/* --- BOOT SEQUENCE --- */
+body.is-booting { overflow: hidden; height: 100vh; }
+
+#boot-sequence {
+  position: fixed; inset: 0; z-index: 99999;
+  background: #000; color: #fff;
+  transition: opacity 0.5s ease;
+  display: flex; flex-direction: column;
+}
+
+/* GRUB Menu */
+#boot-grub {
+  padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 16px;
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+}
+.grub-header { text-align: center; margin-bottom: 24px; }
+.grub-border {
+  border: 2px solid #fff; padding: 2px;
+  margin-bottom: 24px; flex-grow: 1; max-height: 400px;
+}
+.grub-option { padding: 4px 8px; }
+.grub-active { background: #fff; color: #000; }
+.grub-footer { font-size: 14px; color: #aaa; }
+
+/* OS Boot Screen */
+#boot-os {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+}
+.boot-logo { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 24px; }
+.boot-name { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 900; letter-spacing: 2px; }
+
+.boot-spinner {
+  position: relative; width: 40px; height: 40px; margin-top: 60px;
+}
+.boot-spinner .dot {
+  position: absolute; width: 6px; height: 6px; background: #fff; border-radius: 50%;
+  transform-origin: 20px 20px; animation: winspin 1.5s infinite cubic-bezier(0.53, 0.21, 0.29, 0.67);
+  opacity: 0;
+}
+.boot-spinner .dot:nth-child(1) { animation-delay: 0.15s; }
+.boot-spinner .dot:nth-child(2) { animation-delay: 0.3s; }
+.boot-spinner .dot:nth-child(3) { animation-delay: 0.45s; }
+.boot-spinner .dot:nth-child(4) { animation-delay: 0.6s; }
+.boot-spinner .dot:nth-child(5) { animation-delay: 0.75s; }
+
+@keyframes winspin {
+  0% { transform: rotate(0deg); opacity: 1; }
+  75% { transform: rotate(360deg); opacity: 1; }
+  100% { transform: rotate(360deg); opacity: 0; }
 }
 @media(max-width: 600px) {
   #toast-container {

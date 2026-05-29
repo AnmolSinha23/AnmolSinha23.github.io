@@ -21,7 +21,74 @@ function updateSidebarTime() {
 updateSidebarTime();
 setInterval(updateSidebarTime, 1000);
 
-// --- Terminal Engine & Data ---
+// boot screen animation
+window.addEventListener('load', () => {
+  const bootSeq = document.getElementById('boot-sequence');
+  if (!bootSeq) return;
+
+  // Session Memory Check
+  if (sessionStorage.getItem('hasBooted') === 'true') {
+    bootSeq.style.display = 'none';
+    bootSeq.remove();
+    document.body.classList.remove('is-booting');
+    window.dispatchEvent(new Event('scroll'));
+    return; // instantly skip if already booted this session
+  }
+
+  const opt1 = document.getElementById('grub-opt-1');
+  const opt2 = document.getElementById('grub-opt-2');
+  const opt3 = document.getElementById('grub-opt-3');
+  const grub = document.getElementById('boot-grub');
+  const os = document.getElementById('boot-os');
+  const skipBtn = document.getElementById('skip-boot-btn');
+
+  let skipTimeout;
+  
+  function skipBoot() {
+    clearTimeout(skipTimeout);
+    sessionStorage.setItem('hasBooted', 'true');
+    bootSeq.style.opacity = '0';
+    setTimeout(() => {
+      bootSeq.remove();
+      document.body.classList.remove('is-booting');
+      window.dispatchEvent(new Event('scroll'));
+    }, 300);
+  }
+
+  if (skipBtn) {
+    skipBtn.addEventListener('click', skipBoot);
+  }
+
+  // simulate arrow keys down
+  setTimeout(() => {
+    if (sessionStorage.getItem('hasBooted')) return;
+    opt1.classList.remove('grub-active');
+    opt2.classList.add('grub-active');
+  }, 600);
+
+  setTimeout(() => {
+    if (sessionStorage.getItem('hasBooted')) return;
+    opt2.classList.remove('grub-active');
+    opt3.classList.add('grub-active');
+  }, 800);
+
+  // hit enter and show gui
+  setTimeout(() => {
+    if (sessionStorage.getItem('hasBooted')) return;
+    grub.style.display = 'none';
+    os.style.display = 'flex';
+    skipBtn.style.color = '#fff'; // adjust button contrast against black bg
+    skipBtn.style.background = '#000';
+    skipBtn.style.borderColor = '#fff';
+  }, 1300);
+
+  // fade out automatically
+  skipTimeout = setTimeout(() => {
+    if (!sessionStorage.getItem('hasBooted')) skipBoot();
+  }, 4300);
+});
+
+// terminal commands data
 const portfolioData = {
   // ─── HELP ──────────────────────────────────────────────────────────
   "help": `
@@ -98,11 +165,10 @@ const portfolioData = {
   <span class="c-dim">└──</span> Open Source
 `,
 
-  // ─── CURRENT STATUS ────────────────────────────────────────────────
   "current_status": `
-<span class="c-red c-bold">(BREAKING NEWS) :  Breaking Bad on the run, after that Better Caul Saul is on the line</span>
-the current things being studied will be shown here
-<span class="c-dim">^ ^ ^ ^ ^</span>
+<span class="c-yellow c-bold">[STATUS]</span> <span class="c-white">Currently watching Breaking Bad, after that Better Call Saul.</span>
+<span class="c-dim">         Fun fact: I keep tricking myself into watching it instead of studying</span>
+<span class="c-dim">         thinking at least it will improve my attention span.</span>
 `
 };
 
@@ -300,6 +366,18 @@ function startGame() {
     "   xx   ",
     "   xx   "
   ];
+  const crowPixels = [
+    "      x       ",
+    "     xxx      ",
+    "    xxxxx     ",
+    "   xxxxxxx  x ",
+    "x  xxxxxxxxxx ",
+    "xxxxxxxxxxxxx ",
+    " xxxxxxxxxxx  ",
+    "   xxxxxxxxx  ",
+    "     xxx      ",
+    "      x       "
+  ];
 
   function drawSprite(pixels, startX, startY, pixelSize, color) {
     ctx.fillStyle = color;
@@ -363,8 +441,7 @@ function startGame() {
   function drawObstacles() {
     obstacles.forEach(obs => {
       if (obs.type === 'crow') {
-        ctx.fillStyle = '#000'; // black
-        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+        drawSprite(crowPixels, obs.x, obs.y, 2, '#555');
       } else {
         drawSprite(cactusPixels, obs.x, obs.y, 2.5, '#4cd137');
       }
@@ -403,7 +480,7 @@ function startGame() {
     if (!gameActive) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Dino physics
+    // dino physics
     if (dino.antiGrav) {
       dino.dy = 0;
       dino.y = 50; // Float high above obstacles
@@ -427,7 +504,7 @@ function startGame() {
 
     // Obstacles
     spawnTimer++;
-    // CAP the difficulty: Max speed = 12, Min spawn = 40
+    // hardcap the speed so it's actually winnable
     let currentSpeed = Math.min(12, 6 + (score / 2500));
     let spawnThreshold = Math.max(40, 90 - Math.floor(score / 150));
     
@@ -435,8 +512,8 @@ function startGame() {
       spawnTimer = 0;
       let isCrow = score > 2000 && Math.random() < 0.35;
       if (isCrow) {
-        let crowY = Math.random() < 0.5 ? 100 : 70;
-        obstacles.push({ x: 600, y: crowY, width: 20, height: 10, type: 'crow' });
+        let crowY = Math.random() < 0.5 ? 90 : 60;
+        obstacles.push({ x: 600, y: crowY, width: 28, height: 20, type: 'crow' });
       } else {
         obstacles.push({ x: 600, y: 130 - 35, width: 20, height: 35, type: 'cactus' });
       }
@@ -474,7 +551,7 @@ function startGame() {
     // Check for 9500 score hint
     if (score >= 9500 && !hintShown) {
       hintShown = true;
-      printOutput('', `<span class="c-yellow c-bold">[SYSTEM OVERRIDE] Cheat Unlocked! Hold 'S' for Anti-Gravity! (But be careful, the middle blocks still make you lose!)</span>`);
+      printOutput('', `<span class="c-yellow c-bold">[SYSTEM OVERRIDE] Cheat Unlocked! Hold 'S' for Anti-Gravity! (Be careful, the floating crows can still hit you!)</span>`);
     }
     
     drawDino();
@@ -530,7 +607,7 @@ function startMeditation() {
 }
 
 
-// --- Scrollspy ---
+// scrollspy for navbar
 const sections = document.querySelectorAll('.brutal-section');
 const navLinks = document.querySelectorAll('.nav-btn');
 let skillsTimer = null;
@@ -564,7 +641,7 @@ window.addEventListener('scroll', () => {
 });
 window.dispatchEvent(new Event('scroll'));
 
-// --- Interactive Buttons Logic ---
+// btn interactions
 function handleEmailClick(btn) {
   const email = "anmol23sinha@gmail.com";
   if (btn.dataset.state === "revealed") {
@@ -594,7 +671,7 @@ document.getElementById('resume-btn').addEventListener('click', () => {
   setTimeout(() => popup.style.display = 'none', 3000);
 });
 
-// --- Flip Card Logic ---
+// profile flip
 let flipCount = 0;
 const profileFlipper = document.getElementById('profile-flipper');
 document.getElementById('flip-to-stats-btn').addEventListener('click', () => {
@@ -608,12 +685,12 @@ document.getElementById('flip-back-btn').addEventListener('click', () => {
   profileFlipper.classList.remove('is-flipped');
 });
 
-// --- Typewriter Animation ---
+// typewriter text
 const hiText = "Hi people! 👋";
 const typeH1 = document.getElementById('typewriter-h1');
 let typeIndex = 0;
 
-const pTextRaw = `I'm a [1st-year student at IIIT Bhopal] who picks up skills the way some people pick up hobbies — fast, randomly, and always starting with "how hard can it be?" Turns out, [pretty hard] — but honestly, that's kind of the point.`;
+const pTextRaw = `I'm [Anmol]. I write code, break things, and occasionally fix them. Currently doing that at [IIIT Bhopal].`;
 const typeP = document.getElementById('typewriter-p');
 let typeIndexP = 0;
 let currentHTML = "";
