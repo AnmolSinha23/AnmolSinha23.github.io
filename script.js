@@ -662,13 +662,23 @@ function handleEmailClick(btn) {
 document.getElementById('contact-btn-profile').addEventListener('click', function() { handleEmailClick(this); });
 document.getElementById('contact-btn-main').addEventListener('click', function() { handleEmailClick(this); });
 
-document.getElementById('resume-btn').addEventListener('click', () => {
-  const popup = document.getElementById('error-popup');
-  popup.style.display = 'block';
-  popup.style.animation = 'none'; 
-  void popup.offsetWidth; // trigger reflow to restart animation
-  popup.style.animation = 'shake 0.3s ease-in-out';
-  setTimeout(() => popup.style.display = 'none', 3000);
+let resumeOriginalHtml = null;
+document.getElementById('resume-btn').addEventListener('click', function() {
+  if (this.dataset.loading === 'true') return;
+  this.dataset.loading = 'true';
+  
+  if (!resumeOriginalHtml) resumeOriginalHtml = this.innerHTML;
+  
+  this.innerHTML = `⏳ COMING SOON...`;
+  this.style.background = "var(--card-yellow)";
+  this.style.color = "var(--black)";
+  
+  setTimeout(() => {
+    this.innerHTML = resumeOriginalHtml;
+    this.style.background = "";
+    this.style.color = "";
+    this.dataset.loading = 'false';
+  }, 2500);
 });
 
 // profile flip
