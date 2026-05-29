@@ -394,7 +394,7 @@ body.meditate-mode .sidebar {
 }
 @media(max-width: 900px) {
   .construction-container { flex-direction: column; }
-  .construction-divider { width: 100%; height: 4px; }
+  .construction-divider { display: none; }
   .construction-col { min-height: 250px; }
 }
 
