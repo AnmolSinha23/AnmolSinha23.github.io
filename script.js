@@ -90,6 +90,14 @@ window.addEventListener('load', () => {
 
 // terminal commands data
 const portfolioData = {
+  // ─── ARCHITECTURE ──────────────────────────────────────────────────
+  "architecture": `
+<span class="c-peach c-bold">🏗️ architecture</span>
+<span class="c-dim">──────────────────────────────</span>
+
+  Built with raw HTML/CSS/JS. Zero external frameworks, zero image assets (everything is CSS, SVG, or Canvas). AI was utilized as a compiler for tedious boilerplate (like rasterizing game sprites), allowing focus on raw performance and system logic.
+`,
+
   // ─── HELP ──────────────────────────────────────────────────────────
   "help": `
 <span class="c-mauve c-bold">Available Commands</span> <span class="c-dim">──────────────</span>
@@ -306,11 +314,11 @@ function startGame() {
   const canvas = document.createElement('canvas');
   canvas.width = 600;
   canvas.height = 150;
-  canvas.style.border = '2px solid var(--black)';
+  canvas.style.border = '2px solid var(--pure-black)';
   canvas.style.background = '#fff';
   canvas.style.marginTop = '16px';
   canvas.style.borderRadius = '4px';
-  canvas.style.boxShadow = '4px 4px 0 var(--black)';
+  canvas.style.boxShadow = '4px 4px 0 var(--pure-black)';
   canvas.style.maxWidth = '100%';
   canvas.style.height = 'auto';
   
@@ -322,6 +330,7 @@ function startGame() {
 
   const ctx = canvas.getContext('2d');
   
+  // Note: Using string arrays and fillRect for sprites instead of external PNGs to enforce a strict zero-dependency, zero-HTTP-request architecture. Asset generation was AI-assisted to save time. Trading minor CPU compute overhead for absolute zero network latency.
   const dinoPixels = [
     "             xxxxxxxxxxx",
     "            xxxxxxxxxxxx",
@@ -469,7 +478,7 @@ function startGame() {
     setTimeout(() => {
       let finalScoreText = `<span class="c-yellow">your score was : ${Math.floor(score)}</span>`;
       if (score >= 10000) {
-        printOutput('', `<br>${finalScoreText}<br>🎉 <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style="color:var(--btn-green); font-weight:bold; text-decoration:underline; font-size: 16px;">10 dollar giftcard</a> 🎉`);
+        printOutput('', `<br>${finalScoreText}<br>🎉 <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style="color:var(--accent-green); font-weight:bold; text-decoration:underline; font-size: 16px;">10 dollar giftcard</a> 🎉`);
       } else {
         printOutput('', `<br>${finalScoreText}<br><span class="c-red">You are not the chosen one I believe</span>`);
       }
@@ -612,7 +621,19 @@ const sections = document.querySelectorAll('.brutal-section');
 const navLinks = document.querySelectorAll('.nav-btn');
 let skillsTimer = null;
 
-window.addEventListener('scroll', () => {
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+window.addEventListener('scroll', debounce(() => {
   let current = '';
   sections.forEach(section => {
     const sectionTop = section.offsetTop;
@@ -638,7 +659,7 @@ window.addEventListener('scroll', () => {
       link.classList.add('active');
     }
   });
-});
+}, 50));
 window.dispatchEvent(new Event('scroll'));
 
 // btn interactions
@@ -648,7 +669,7 @@ function handleEmailClick(btn) {
     navigator.clipboard.writeText(email).catch(err => console.error('Clipboard copy failed:', err));
     const previousHtml = btn.innerHTML;
     btn.innerHTML = `✅ Copied!`;
-    btn.style.background = "var(--btn-green)";
+    btn.style.background = "var(--accent-green)";
     setTimeout(() => {
       btn.innerHTML = previousHtml;
       btn.style.background = "";
@@ -670,8 +691,8 @@ document.getElementById('resume-btn').addEventListener('click', function() {
   if (!resumeOriginalHtml) resumeOriginalHtml = this.innerHTML;
   
   this.innerHTML = `⏳ COMING SOON...`;
-  this.style.background = "var(--card-yellow)";
-  this.style.color = "var(--black)";
+  this.style.background = "var(--accent-yellow)";
+  this.style.color = "var(--pure-black)";
   
   setTimeout(() => {
     this.innerHTML = resumeOriginalHtml;

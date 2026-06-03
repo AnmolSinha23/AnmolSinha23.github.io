@@ -13,7 +13,7 @@
 
 <!-- BOOT SEQUENCE OVERLAY -->
 <div id="boot-sequence">
-  <button id="skip-boot-btn" class="btn-solid" style="position: absolute; top: 16px; right: 16px; z-index: 100000; padding: 8px 16px; background: #fff; color: #000; font-family: 'JetBrains Mono', monospace; font-size: 14px; border: 2px solid #000; box-shadow: 4px 4px 0 #000;">Skip Boot >></button>
+  <button id="skip-boot-btn" class="btn-solid">Skip Boot >></button>
   <!-- Stage 1: GRUB Menu -->
   <div id="boot-grub">
     <div class="grub-header">
@@ -43,7 +43,7 @@
 </div>
 
 <!-- ERROR POPUP -->
-<div id="error-popup" class="brutal-card" style="display:none; position:fixed; top: 24px; right: 24px; z-index: 9999; background: var(--btn-red); color: var(--card-white); padding: 16px 24px; border: 4px solid var(--black); box-shadow: 8px 8px 0px 0px var(--black); font-weight: 900; font-family: 'JetBrains Mono', monospace; font-size: 14px;">
+<div id="error-popup" class="brutal-card" style="display:none;">
   <span style="font-size:20px;vertical-align:middle;margin-right:8px;">⚠️</span> ERROR: Not enough Achievements / Skills found
 </div>
 
@@ -51,7 +51,7 @@
 
 <!-- SIDEBAR -->
 <nav class="sidebar">
-  <div class="nav-title" style="font-size: 24px; line-height: 1.1;">MY LITTLE<br>CORNER</div>
+  <div class="nav-title">MY LITTLE<br>CORNER</div>
   <div class="nav-links">
     <a href="#about" class="nav-btn">ABOUT</a>
     <a href="#education" class="nav-btn">EDUCATION</a>
@@ -60,7 +60,7 @@
     <a href="#projects" class="nav-btn">PROJECTS</a>
     <a href="#contact" class="nav-btn">CONTACT</a>
   </div>
-  <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+  <div class="nav-clock-container">
     <div class="nav-date" id="nav-date"></div>
     <div class="nav-clock" id="nav-clock"></div>
   </div>
@@ -91,16 +91,16 @@
           <div class="badge blue"><span>[MISSION]</span> figuring out</div>
         </div>
         
-        <div class="profile-btns" style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
-          <button id="resume-btn" class="btn-solid btn-green" style="display:flex; align-items:center; justify-content:center; gap:12px;">
+        <div class="profile-btns">
+          <button id="resume-btn" class="btn-solid btn-green">
             <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M12 16l-5-5h3V4h4v7h3l-5 5z"/><path fill="#fbc531" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M5 18h14v3H5z"/></svg> 
             DOWNLOAD_RESUME
           </button>
-          <button id="contact-btn-profile" class="btn-solid btn-red" style="display:flex; align-items:center; justify-content:center; gap:12px;">
+          <button id="contact-btn-profile" class="btn-solid btn-red">
             <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M3 6h18v12H3z"/><path fill="#fbc531" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M3 6l9 6 9-6"/></svg> 
             CONTACT ME
           </button>
-          <button id="flip-to-stats-btn" class="btn-solid btn-yellow" style="font-weight: 900; display:flex; align-items:center; justify-content:center; gap:12px;">
+          <button id="flip-to-stats-btn" class="btn-solid btn-yellow">
             <svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="14" width="5" height="7" fill="#e84118" stroke="#000" stroke-width="2"/><rect x="9.5" y="8" width="5" height="13" fill="#000" stroke="#000" stroke-width="2"/><rect x="16" y="2" width="5" height="19" fill="#4cd137" stroke="#000" stroke-width="2"/><path d="M1 22h22" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
             VIEW STATS
           </button>
@@ -115,42 +115,42 @@
           <div class="finger"></div>
           <div class="finger"></div>
         </div>
-        <h2 style="font-size:24px; font-weight:900; font-style:italic; border-bottom:4px solid var(--black); padding-bottom:8px; width:100%; text-align:center; margin-bottom: 16px;">ANMOL SINHA</h2>
-        <img src="red.png" class="profile-pic" alt="Pokemon Trainer Red" style="animation:none; width:100px; height:100px; margin-bottom: 24px;" />
+        <h2 class="stats-heading">ANMOL SINHA</h2>
+        <img src="red.png" class="profile-pic profile-pic-back" alt="Pokemon Trainer Red" />
         
         <div class="profile-title" style="margin-bottom:16px;">COMPETITIVE PROFILES</div>
         
-        <div style="width: 100%; text-align: left; display:flex; flex-direction:column; gap:12px; margin-bottom: 24px; flex-grow: 1;">
+        <div class="stats-links-container">
           <!-- LeetCode -->
-          <a href="https://leetcode.com/u/o7t4K3Sz7N/" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+          <a href="https://leetcode.com/u/o7t4K3Sz7N/" target="_blank" class="stat-link">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="#FFA116"><path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.115-.702-1.823s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.055 5.055 0 0 0-2.445-1.337l2.467-2.503c.513-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038l-10.1 10.101c-.981.982-1.494 2.337-1.494 3.833s.513 2.851 1.494 3.833l4.332 4.363c.981.981 2.338 1.482 3.833 1.482s2.853-.501 3.833-1.482l2.697-2.607c.514-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038z"/></svg>
             LeetCode
             <span style="margin-left:auto; font-size:18px;">↗</span>
           </a>
           
           <!-- Codeforces -->
-          <a href="https://codeforces.com/profile/anmolsinha.edu" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+          <a href="https://codeforces.com/profile/anmolsinha.edu" target="_blank" class="stat-link">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="none"><rect x="13.5" y="4" width="3.5" height="16" fill="#F44336"/><rect x="8.5" y="11" width="3.5" height="9" fill="#2196F3"/><rect x="18.5" y="13" width="3.5" height="7" fill="#FFC107"/></svg>
             Codeforces
             <span style="margin-left:auto; font-size:18px;">↗</span>
           </a>
 
           <!-- CodeChef -->
-          <a href="https://www.codechef.com/users/anmol_ssinha" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+          <a href="https://www.codechef.com/users/anmol_ssinha" target="_blank" class="stat-link">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="#5b4434"><path d="M12 2C9 2 6 4 6 7c0 1.2.6 2.3 1.5 3.1-.2.5-.3 1.1-.3 1.7 0 3 3 5.4 6 5.8v2.4h-2v2h6v-2h-2v-2.4c3-.4 6-2.8 6-5.8 0-.6-.1-1.2-.3-1.7C19.4 9.3 20 8.2 20 7c0-3-3-5-8-5zm0 2c3.5 0 6 1.5 6 3 0 .8-.5 1.5-1.2 2-.8-.4-1.8-.7-2.8-.7V7.5C14 6.7 13.1 6 12 6s-2 .7-2 1.5v.8c-1 .1-2 .4-2.8.7C6.5 8.5 6 7.8 6 7c0-1.5 2.5-3 6-3z"/></svg>
             CodeChef
             <span style="margin-left:auto; font-size:18px;">↗</span>
           </a>
 
           <!-- Chess.com -->
-          <a href="https://www.chess.com/member/gameyguys/stats/rapid" target="_blank" class="stat-link" style="display:flex; align-items:center; gap:12px; background:var(--card-white); border:3px solid var(--black); border-radius:8px; padding:8px 16px; color:var(--black); text-decoration:none; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:15px; box-shadow: 4px 4px 0 var(--black); transition:all 0.1s;">
+          <a href="https://www.chess.com/member/gameyguys/stats/rapid" target="_blank" class="stat-link">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="#7FA650"><path d="M12 2C10.3 2 9 3.3 9 5c0 1.2.7 2.2 1.7 2.7l-1.4 5.3H8v2h8v-2h-1.3l-1.4-5.3c1-.5 1.7-1.5 1.7-2.7 0-1.7-1.3-3-3-3zM7 17h10v2H7v-2zm-2 3h14v2H5v-2z"/></svg>
             Chess.com
             <span style="margin-left:auto; font-size:18px;">↗</span>
           </a>
         </div>
 
-        <button id="flip-back-btn" class="btn-solid btn-blue" style="width: 100%; font-weight: 900;">🔙 GO BACK</button>
+        <button id="flip-back-btn" class="btn-solid btn-blue">🔙 GO BACK</button>
       </div>
 
     </div>
@@ -164,7 +164,7 @@
       <!-- INTRO CARD -->
       <div class="brutal-card intro-card io-hidden">
         <h1 id="typewriter-h1"></h1>
-        <p id="typewriter-p" style="min-height: 100px; line-height: 1.6;"></p>
+        <p id="typewriter-p"></p>
       </div>
 
       <!-- TERMINAL CARD -->
@@ -174,8 +174,8 @@
           <div class="title">root@anmol:~</div>
         </div>
         <div id="term-body">
-          <div class="output-block" style="display: flex; gap: 16px; margin-bottom: 16px; align-items: center; justify-content: center; flex-wrap: wrap;">
-            <pre style="color: #51a2da; font-family: monospace; font-weight: bold; font-size: 11px; line-height: 1.15; margin: 0; padding-right: 16px; max-width: 100%; overflow-x: auto;">
+          <div class="output-block terminal-ascii-wrapper">
+            <pre class="terminal-ascii">
         /:-------------:\
      :-------------------::
    :-----------/shhOHbmp---:\
@@ -192,9 +192,9 @@
 :-- :dMNdhhdNMMNo------------;
 :---:sdNMMMMNds:------------:
             </pre>
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; color: #fff;">
-              <div style="color: #51a2da; font-weight: bold; font-size: 15px; margin-bottom: 4px;">root@portfolio-exp</div>
-              <div style="display: grid; grid-template-columns: auto 1fr; column-gap: 12px;">
+            <div class="terminal-os-info">
+              <div class="terminal-os-header">root@portfolio-exp</div>
+              <div class="terminal-os-grid">
                 <span class="c-dim">OS:</span> <span>Fedora Linux 44 (KDE Plasma fan)</span>
                 <span class="c-dim">Host:</span> <span>portfolio-exp</span>
                 <span class="c-dim">Kernel:</span> <span>6.13.0-fc44.x86_64</span>
@@ -214,9 +214,9 @@
 
     <!-- EDUCATION SECTION -->
     <section id="education" class="brutal-section">
-      <div class="brutal-card section-card io-hidden" style="background: #a29bfe;">
+      <div class="brutal-card section-card bg-lavender io-hidden">
         <h2>Education</h2>
-        <div class="badge yellow" style="display:inline-flex;margin-bottom:12px;"><span>B.Tech in Computer Science</span></div>
+        <div class="badge yellow" style="display:inline-flex; margin-bottom:12px;"><span>B.Tech in Computer Science</span></div>
         <h3>IIIT BHOPAL</h3>
         <p><strong>Year:</strong> 1st Year (Expected Grad: 2029)</p>
         <p><strong>Class 10th (CBSE):</strong> 99.4%</p>
@@ -227,7 +227,7 @@
 
     <!-- SKILLS SECTION -->
     <section id="skills" class="brutal-section">
-      <div class="brutal-card section-card io-hidden" style="background: #48e285;">
+      <div class="brutal-card section-card bg-light-green io-hidden">
         <h2>Skills</h2>
         <div style="display:flex; gap:12px; flex-wrap:wrap; font-weight:700;">
            <span class="badge white"><span>C++ (Primary)</span></span>
@@ -242,22 +242,22 @@
 
     <!-- SIDE QUESTS SECTION -->
     <section id="side-quests" class="brutal-section">
-      <div class="brutal-card section-card io-hidden" style="background: #e84118;">
-        <h2 style="color: #fbc531;">Side Quests</h2>
-        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
-          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-            <div style="background: #fbc531; color: var(--black); padding: 12px 20px; border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--black); border-radius: 8px;">
-              <span style="display: block; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; opacity: 0.8; font-family: 'JetBrains Mono', monospace;">Current Typing Speed</span>
-              <span style="font-size: 28px; font-weight: 900;">114 <span style="font-size: 16px; opacity: 0.9;">WPM avg</span></span>
+      <div class="brutal-card section-card bg-red io-hidden">
+        <h2>Side Quests</h2>
+        <div class="flex-col-gap16-mt24">
+          <div class="flex-wrap-gap16">
+            <div class="typing-stat-box">
+              <span class="typing-stat-label">Current Typing Speed</span>
+              <span class="typing-stat-value">114 <span class="typing-stat-unit">WPM avg</span></span>
             </div>
-            <a href="https://monkeytype.com/" target="_blank" class="btn-solid" style="background: #0984e3; color: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; width: auto; padding: 12px 20px; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+            <a href="https://monkeytype.com/" target="_blank" class="btn-solid test-yours-btn">
               test yours ↗
             </a>
           </div>
-          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-            <div style="background: #fbc531; color: var(--black); padding: 12px 20px; border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--black); border-radius: 8px;">
-              <span style="display: block; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; opacity: 0.8; font-family: 'JetBrains Mono', monospace;">Highest Speed (1 min)</span>
-              <span style="font-size: 28px; font-weight: 900;">132 <span style="font-size: 16px; opacity: 0.9;">WPM</span></span>
+          <div class="flex-wrap-gap16">
+            <div class="typing-stat-box">
+              <span class="typing-stat-label">Highest Speed (1 min)</span>
+              <span class="typing-stat-value">132 <span class="typing-stat-unit">WPM</span></span>
             </div>
           </div>
         </div>
@@ -266,30 +266,30 @@
 
     <!-- PROJECTS & EXPERIENCE SECTION -->
     <section id="projects" class="brutal-section">
-      <div class="brutal-card construction-container io-hidden" style="background: var(--card-white);">
+      <div class="brutal-card construction-container bg-white io-hidden">
         
         <!-- Left Column: Projects -->
-        <div class="construction-col" style="justify-content: flex-start; gap: 24px;">
-          <h2 style="width: 100%; text-align: left; font-size:32px; font-weight:900; font-style:italic; text-transform:uppercase; border-bottom:4px solid var(--black); padding-bottom:8px; margin:0 0 8px 0;">Projects</h2>
+        <div class="construction-col col-start">
+          <h2 class="section-header-style">Projects</h2>
           
           <!-- Project 1: This Portfolio Itself -->
-          <div style="background:var(--card-white); border:4px solid var(--black); padding:20px; box-shadow:6px 6px 0 var(--black); width: 100%; text-align: left; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-            <h3 style="margin:0 0 8px 0; font-size:20px; font-weight:900; text-transform:uppercase;">This Portfolio Itself</h3>
-            <p style="margin:0 0 12px 0; font-size:14px; font-weight:600; line-height:1.4;">A highly interactive, gamified personal portfolio. Features a custom terminal interface, and a persistent achievement system because why not?</p>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <span class="badge yellow" style="font-size:10px; padding:4px 8px; box-shadow: 2px 2px 0 var(--black);">HTML/CSS</span>
-              <span class="badge blue" style="font-size:10px; padding:4px 8px; box-shadow: 2px 2px 0 var(--black);">JavaScript</span>
-              <span class="badge green" style="font-size:10px; padding:4px 8px; box-shadow: 2px 2px 0 var(--black);">localStorage</span>
+          <div class="project-card">
+            <h3 class="project-card-title">This Portfolio Itself</h3>
+            <p class="project-card-desc">A highly interactive, gamified personal portfolio. Features a custom terminal interface, and a persistent achievement system because why not?</p>
+            <div class="badge-container">
+              <span class="badge yellow" class="badge-small">HTML/CSS</span>
+              <span class="badge blue" class="badge-small">JavaScript</span>
+              <span class="badge green" class="badge-small">localStorage</span>
             </div>
           </div>
 
           <!-- Project 2: Terminal Dino Game -->
-          <div style="background:var(--card-white); border:4px solid var(--black); padding:20px; box-shadow:6px 6px 0 var(--black); width: 100%; text-align: left; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-            <h3 style="margin:0 0 8px 0; font-size:20px; font-weight:900; text-transform:uppercase;">Terminal Dino Game</h3>
-            <p style="margin:0 0 12px 0; font-size:14px; font-weight:600; line-height:1.4;">A lightweight raster engine built entirely in JS to render the classic retro game graphics and physics without needing any image downloads.</p>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <span class="badge yellow" style="font-size:10px; padding:4px 8px; box-shadow: 2px 2px 0 var(--black);">JS Canvas</span>
-              <span class="badge red" style="font-size:10px; padding:4px 8px; box-shadow: 2px 2px 0 var(--black); background: #e84118; color: #fff;">Math</span>
+          <div class="project-card">
+            <h3 class="project-card-title">Terminal Dino Game</h3>
+            <p class="project-card-desc">A lightweight raster engine built entirely in JS to render the classic retro game graphics and physics without needing any image downloads.</p>
+            <div class="badge-container">
+              <span class="badge yellow" class="badge-small">JS Canvas</span>
+              <span class="badge-math">Math</span>
             </div>
           </div>
 
@@ -299,10 +299,10 @@
         <div class="construction-divider"></div>
 
         <!-- Right Column: Experience -->
-        <div class="construction-col" style="justify-content: flex-start; gap: 24px;">
-          <h2 style="width: 100%; text-align: left; font-size:32px; font-weight:900; font-style:italic; text-transform:uppercase; border-bottom:4px solid var(--black); padding-bottom:8px; margin:0 0 8px 0;">Experience</h2>
+        <div class="construction-col col-start">
+          <h2 class="section-header-style">Experience</h2>
           
-          <div style="background:var(--card-yellow); border:4px solid var(--black); padding:32px 24px; box-shadow:8px 8px 0 var(--black); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+          <div class="experience-card">
             <!-- Animated SVG Gear -->
             <svg viewBox="0 0 100 100" width="80" height="80" style="animation: spin 4s linear infinite;">
               <style>
@@ -313,8 +313,8 @@
               <circle cx="50" cy="50" r="14" fill="#e84118" stroke="#000" stroke-width="4"/>
             </svg>
             
-            <h3 style="margin:0; font-size:26px; color:var(--black); text-transform:uppercase; font-weight:900; letter-spacing: 1px;">Loading...</h3>
-            <p style="margin:0; font-size:16px; font-weight:700; text-align:center; opacity: 0.9;">Currently building foundation as a 1st-year B.Tech student.</p>
+            <h3 class="experience-title">Loading...</h3>
+            <p class="experience-desc">Currently building foundation as a 1st-year B.Tech student.</p>
           </div>
 
         </div>
@@ -323,11 +323,11 @@
 
     <!-- CONTACT SECTION -->
     <section id="contact" class="brutal-section">
-      <div class="brutal-card section-card io-hidden" style="background: #f4d03f; text-align:center;">
+      <div class="brutal-card section-card bg-yellow center-text io-hidden">
         <h2>Contact Me</h2>
-        <p style="font-size:18px; margin-bottom: 24px;">Let's build something awesome together.</p>
-        <button id="contact-btn-main" class="btn-solid btn-blue" style="max-width:300px; margin: 0 auto;">✉ Send me an Email</button>
-        <div style="display:flex; justify-content:center; gap:32px; margin-top:32px;">
+        <p class="contact-desc">Let's build something awesome together.</p>
+        <button id="contact-btn-main" class="btn-solid btn-blue contact-btn-style">✉ Send me an Email</button>
+        <div class="contact-links-wrapper">
           <a href="https://github.com/AnmolSinha23" target="_blank" aria-label="GitHub" class="contact-icon gh">
             <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
           </a>
