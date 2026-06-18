@@ -26,12 +26,119 @@ html, body {
   background-size: 28px 28px;
   color: var(--pure-black);
   overflow-x: clip;
-  scroll-behavior: smooth;
 }
 body::before {
   content: ''; position: fixed; inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   opacity: 0.04; pointer-events: none; z-index: 9998;
+}
+
+/* --- HIDE NATIVE SCROLLBAR --- */
+::-webkit-scrollbar {
+  display: none;
+}
+html, body {
+  scrollbar-width: none;
+}
+
+/* --- CUSTOM PISTON SCROLLBAR --- */
+#custom-scrollbar-track {
+  position: fixed;
+  top: 8px; /* below progress bar */
+  right: 0;
+  width: 24px;
+  height: calc(100vh - 8px);
+  background: var(--bg-primary);
+  border-left: 3px solid var(--pure-black);
+  z-index: 9998;
+}
+#piston-head {
+  width: 100%;
+  height: 60px;
+  background: var(--accent-yellow);
+  border-bottom: 4px solid var(--pure-black);
+  cursor: grab;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+#piston-head:active {
+  cursor: grabbing;
+  background: var(--brand-primary);
+}
+.piston-grip {
+  width: 12px;
+  height: 3px;
+  background: var(--pure-black);
+  border-radius: 2px;
+}
+#piston-spring {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: calc(100% - 60px);
+  background: repeating-linear-gradient(
+    0deg,
+    var(--pure-black),
+    var(--pure-black) 4px,
+    #a4b0be 4px,
+    #a4b0be 12px
+  );
+  border-left: 2px solid var(--pure-black);
+  border-right: 2px solid var(--pure-black);
+  z-index: 1;
+  transform-origin: bottom;
+}
+#spring-release-btn {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  color: var(--bg-white);
+  border: 3px solid var(--pure-black);
+  box-shadow: 2px 2px 0 var(--pure-black);
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  z-index: 3;
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s, box-shadow 0.1s;
+}
+#spring-release-btn.visible {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+#spring-release-btn:active {
+  transform: translateX(-50%) scale(0.9) translate(2px, 2px);
+  box-shadow: 0 0 0 var(--pure-black);
+}
+
+
+
+/* --- SCROLL PROGRESS BAR --- */
+#scroll-progress-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 8px;
+  background: transparent;
+  z-index: 9999;
+  pointer-events: none;
+}
+#scroll-progress {
+  height: 100%; width: 0%;
+  background: var(--accent-red);
+  border-right: 3px solid var(--pure-black);
+  border-bottom: 3px solid var(--pure-black);
+  border-bottom-right-radius: 4px;
 }
 
 /* --- SIDEBAR --- */
@@ -107,7 +214,7 @@ body::before {
 /* io-hidden for IntersectionObserver Entrance */
 .io-hidden {
   opacity: 0 !important;
-  transform: translateY(30px) !important;
+  transform: translateY(50px) !important;
   box-shadow: 0 0 0 0 var(--pure-black) !important;
 }
 
@@ -126,7 +233,7 @@ body::before {
   transform: rotateY(180deg);
 }
 .profile-card {
-  background: var(--bg-white);
+  background: #fef6e4;
   padding: 32px 24px;
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
@@ -244,6 +351,45 @@ body::before {
 }
 .intro-card h1 {
   font-size: 40px; font-weight: 900; font-style: italic; margin-bottom: 16px;
+}
+.name-swap {
+  display: inline-grid;
+  grid-template-areas: "word";
+  background: var(--pure-black);
+  color: var(--bg-white);
+  padding: 0 12px;
+  border-radius: 8px;
+  transform: skew(-5deg);
+  margin: 0 4px;
+  box-shadow: 4px 4px 0 var(--brand-primary);
+  text-align: center;
+  justify-items: center;
+  align-items: center;
+  line-height: 1.1;
+}
+.name-swap > span {
+  grid-area: word;
+  display: block;
+  animation: glitchWord 4s infinite linear;
+}
+.name-swap > span:nth-child(2) {
+  animation-delay: -2s;
+  color: var(--accent-yellow);
+}
+@keyframes glitchWord {
+  0%, 42% { opacity: 1; transform: translate(0, 0); }
+  43% { opacity: 1; transform: translate(-4px, 2px) skewX(20deg); text-shadow: 2px 0 red, -2px 0 cyan; }
+  44% { opacity: 1; transform: translate(4px, -2px) skewX(-20deg); text-shadow: -2px 0 red, 2px 0 cyan; }
+  45% { opacity: 1; transform: translate(-2px, 4px) skewX(10deg); text-shadow: 2px 0 red, -2px 0 cyan; }
+  46% { opacity: 1; transform: translate(2px, -4px) skewX(-10deg); text-shadow: none; }
+  47%, 50% { opacity: 0; transform: translate(0, 0); }
+  
+  50.001%, 92% { opacity: 0; transform: translate(0, 0); }
+  93% { opacity: 1; transform: translate(-4px, 2px) skewX(20deg); text-shadow: 2px 0 red, -2px 0 cyan; }
+  94% { opacity: 1; transform: translate(4px, -2px) skewX(-20deg); text-shadow: -2px 0 red, 2px 0 cyan; }
+  95% { opacity: 1; transform: translate(-2px, 4px) skewX(10deg); text-shadow: 2px 0 red, -2px 0 cyan; }
+  96% { opacity: 1; transform: translate(2px, -4px) skewX(-10deg); text-shadow: none; }
+  97%, 100% { opacity: 1; transform: translate(0, 0); }
 }
 .intro-card p {
   font-size: 18px; font-weight: 600; line-height: 1.6;
@@ -398,15 +544,20 @@ body.meditate-mode .sidebar {
   .construction-col { min-height: 250px; }
 }
 
-/* --- Bounce Effects --- */
-/* Slow transition for cards (needed for entrance animations) */
+/* --- Smooth Transitions --- */
+/* Slow, buttery transition for cards (entrance animations & hover) */
 .intro-card, .terminal-card, .section-card, .profile-pic {
-  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1.15), opacity 0.6s ease, box-shadow 0.6s ease, background 0.15s ease, filter 0.3s ease !important;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease, box-shadow 0.6s ease, background 0.4s ease, filter 0.3s ease !important;
 }
 
-/* Fast, snappy mechanical transition for interactive buttons */
-.btn-solid, .nav-btn, .badge, .contact-icon {
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, background 0.15s ease !important;
+/* Fluid transition for interactive buttons */
+.btn-solid, .badge, .contact-icon {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease !important;
+}
+
+/* Super smooth direct transitions for navbar buttons to eliminate lag and bounce */
+.nav-btn {
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, background 0.15s ease-out !important;
 }
 
 .contact-icon {
@@ -420,10 +571,10 @@ body.meditate-mode .sidebar {
 .contact-icon.gh { background: var(--bg-white); }
 .contact-icon.li { background: #0A66C2; color: var(--bg-white); }
 
-.btn-solid:hover, .nav-btn:hover, .badge:hover, .contact-icon:hover, .intro-card:hover, .terminal-card:hover, .section-card:hover, .profile-pic:hover {
+.btn-solid:hover, .badge:hover, .contact-icon:hover, .intro-card:hover, .terminal-card:hover, .section-card:hover, .profile-pic:hover {
   transform: translateY(-6px) !important;
 }
-.btn-solid:active, .nav-btn:active, .stat-link:active, .contact-icon:active { 
+.btn-solid:active, .stat-link:active, .contact-icon:active { 
   transform: translate(4px, 4px) !important; 
   box-shadow: 0px 0px 0px var(--pure-black) !important; 
 }
@@ -449,7 +600,7 @@ body.meditate-mode .sidebar {
   .intro-card h1 { font-size: 28px; }
   .intro-card p { font-size: 16px; }
   .terminal-card { height: 500px; }
-  #term-body pre { font-size: 7px !important; }
+  #term-body pre { font-size: 9px !important; }
   .badge { font-size: 11px; flex-wrap: wrap; }
   .btn-solid { font-size: 13px; padding: 10px; }
   .flipper.is-flipped .back h2 { font-size: 20px !important; }
@@ -632,7 +783,7 @@ body.is-booting { overflow: hidden; height: 100vh; }
 .terminal-ascii {
   color: #51a2da; font-family: monospace; font-weight: bold;
   font-size: 11px; line-height: 1.15; margin: 0; padding-right: 16px;
-  max-width: 100%; overflow-x: auto;
+  max-width: 100%; overflow: hidden;
 }
 
 .terminal-os-info {

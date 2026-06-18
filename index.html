@@ -11,6 +11,22 @@
 </head>
 <body class="is-booting">
 
+<!-- SCROLL PROGRESS BAR -->
+<div id="scroll-progress-container">
+  <div id="scroll-progress"></div>
+</div>
+
+<!-- CUSTOM PISTON SCROLLBAR -->
+<div id="custom-scrollbar-track">
+  <div id="piston-head">
+    <div class="piston-grip"></div>
+    <div class="piston-grip"></div>
+    <div class="piston-grip"></div>
+  </div>
+  <div id="piston-spring"></div>
+  <button id="spring-release-btn">▲</button>
+</div>
+
 <!-- BOOT SEQUENCE OVERLAY -->
 <div id="boot-sequence">
   <button id="skip-boot-btn" class="btn-solid">Skip Boot >></button>
@@ -176,21 +192,18 @@
         <div id="term-body">
           <div class="output-block terminal-ascii-wrapper">
             <pre class="terminal-ascii">
-        /:-------------:\
-     :-------------------::
-   :-----------/shhOHbmp---:\
- /-----------omMMMNNNMMD  ---:
-:-----------sMMMMNMNMP.    ---:
-:-----------:MMMdP-------    ---\
-,------------:MMMd--------    ---:
-:------------:MMMd-------    .---:
-:----    oNMMMMMMMMMNho     .----:
-:--     .+shhhDDDhhhhy++   .------/
-:-    -------:MMMd--------------:
-:-   --------/MMMd-------------;
-:-    ------/hMMMy------------:
-:-- :dMNdhhdNMMNo------------;
-:---:sdNMMMMNds:------------:
+         ,/\/\,
+       //|||||\\
+      // _   _ \\
+     |  (o) (o)  |
+     |    ___    |
+      \  \___/  /
+       \_______/
+       _||___||_
+     // /     \ \\
+    // /|     |\ \\
+   || | |     | | ||
+   || | |=====| | ||
             </pre>
             <div class="terminal-os-info">
               <div class="terminal-os-header">root@portfolio-exp</div>
@@ -347,6 +360,7 @@
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
 
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

@@ -106,11 +106,22 @@ const portfolioData = {
   <span class="c-green">skills</span>         <span class="c-dim">│</span>  Tech stack
   <span class="c-green">specs</span>          <span class="c-dim">│</span>  Hardware & OS
   <span class="c-green">current_status</span> <span class="c-dim">│</span>  What I'm doing
+  <span class="c-green">inspiration</span>    <span class="c-dim">│</span>  Inspiration
   <span class="c-green">meditate</span>       <span class="c-dim">│</span>  Take a breather
   <span class="c-green">game</span>           <span class="c-dim">│</span>  Dino game
   <span class="c-green">sudo</span>           <span class="c-dim">│</span>  ???
   <span class="c-green">clear</span>          <span class="c-dim">│</span>  Clear terminal
   <span class="c-green">help</span>           <span class="c-dim">│</span>  Show this
+`,
+
+  // ─── INSPIRATION ───────────────────────────────────────────────────
+  "inspiration": `
+<span class="c-peach c-bold">✨ inspiration</span>
+<span class="c-dim">──────────────────────────────</span>
+
+  This site's incredible aesthetic and structure were heavily 
+  inspired by <a href="https://aditi-portfolio-six.vercel.app/" target="_blank" style="color:var(--accent-blue); text-decoration:underline; font-weight:bold;">Aditi's Portfolio</a>. 
+  Check it out for some amazing design work!
 `,
 
   // ─── SPECS ─────────────────────────────────────────────────────────
@@ -616,10 +627,139 @@ function startMeditation() {
 }
 
 
+// Initialize Lenis for smooth scrolling
+const lenis = new Lenis({
+  lerp: 0.15, // Higher lerp for snappier, more responsive wheel scroll
+  wheelMultiplier: 1.2,
+  smoothWheel: true
+});
+
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+requestAnimationFrame(raf);
+
+// --- Custom Scrollbar Logic ---
+const pistonTrack = document.getElementById('custom-scrollbar-track');
+const pistonHead = document.getElementById('piston-head');
+const pistonSpring = document.getElementById('piston-spring');
+const releaseBtn = document.getElementById('spring-release-btn');
+const progressBar = document.getElementById('scroll-progress');
+
+let isDraggingPiston = false;
+
+function updateScrollUI(progress) {
+  if (typeof progress === 'undefined' || isNaN(progress)) {
+    const winScroll = window.scrollY;
+    const height = document.documentElement.scrollHeight - window.innerHeight;
+    progress = height > 0 ? winScroll / height : 0;
+  }
+  
+  progress = Math.max(0, Math.min(1, progress));
+  
+  if (progressBar) {
+    progressBar.style.width = `${progress * 100}%`;
+  }
+  
+  if (pistonTrack && pistonHead && pistonSpring) {
+    const trackHeight = pistonTrack.clientHeight;
+    const headHeight = pistonHead.clientHeight;
+    const maxTop = trackHeight - headHeight;
+    
+    const currentTop = progress * maxTop;
+    pistonHead.style.transform = `translateY(${currentTop}px)`;
+    
+    // Scale spring based on progress
+    const springScale = 1 - progress;
+    pistonSpring.style.transform = `scaleY(${Math.max(0.01, springScale)})`;
+  }
+  
+  if (releaseBtn) {
+    if (progress > 0.99) {
+      releaseBtn.classList.add('visible');
+    } else {
+      releaseBtn.classList.remove('visible');
+    }
+  }
+}
+
+lenis.on('scroll', (e) => {
+  if (!isDraggingPiston) {
+    updateScrollUI(e.progress);
+  }
+});
+
+// Force correct UI on load
+window.addEventListener('DOMContentLoaded', () => updateScrollUI());
+window.addEventListener('load', () => updateScrollUI());
+
+// Interactivity for piston drag
+if (pistonHead && pistonTrack) {
+  let startY, startProgress;
+  
+  pistonHead.addEventListener('mousedown', (e) => {
+    isDraggingPiston = true;
+    startY = e.clientY;
+    
+    const height = document.documentElement.scrollHeight - window.innerHeight;
+    startProgress = height > 0 ? window.scrollY / height : 0;
+    
+    document.body.style.userSelect = 'none';
+  });
+  
+  window.addEventListener('mousemove', (e) => {
+    if (!isDraggingPiston) return;
+    
+    const trackHeight = pistonTrack.clientHeight;
+    const headHeight = pistonHead.clientHeight;
+    const maxTop = trackHeight - headHeight;
+    const deltaY = e.clientY - startY;
+    
+    let newProgress = startProgress + (deltaY / maxTop);
+    newProgress = Math.max(0, Math.min(1, newProgress));
+    
+    const targetScroll = newProgress * (document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo({ top: targetScroll, behavior: 'instant' });
+    
+    updateScrollUI(newProgress);
+  });
+  
+  window.addEventListener('mouseup', () => {
+    isDraggingPiston = false;
+    document.body.style.userSelect = '';
+  });
+}
+
+// Release button logic
+if (releaseBtn) {
+  releaseBtn.addEventListener('click', () => {
+    // Real physics: Explosive spring release curve (ExpoOut)
+    // Immense initial acceleration that smoothly dampens, perfectly tracking the piston
+    lenis.scrollTo(0, {
+      duration: 1.0,
+      easing: (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t)
+    });
+  });
+}
+
 // scrollspy for navbar
 const sections = document.querySelectorAll('.brutal-section');
 const navLinks = document.querySelectorAll('.nav-btn');
 let skillsTimer = null;
+
+// Add smooth scrolling click event for all sidebar buttons
+navLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetId = link.getAttribute('href');
+    lenis.scrollTo(targetId, {
+      offset: -100,
+      duration: 0.8,
+      easing: (t) => 1 - Math.pow(1 - t, 4) // Quart Out easing for a snappy stop
+    });
+  });
+});
 
 function debounce(func, wait) {
   let timeout;
@@ -717,11 +857,12 @@ document.getElementById('flip-back-btn').addEventListener('click', () => {
 });
 
 // typewriter text
-const hiText = "Hi people! 👋";
+const hiTextRaw = "Hi People, {NAME} this side";
 const typeH1 = document.getElementById('typewriter-h1');
 let typeIndex = 0;
+let currentH1HTML = "";
 
-const pTextRaw = `I'm [Anmol]. I write code, break things, and occasionally fix them. Currently doing that at [IIIT Bhopal].`;
+const pTextRaw = `I write code, break things, and occasionally fix them. Currently doing that at [IIIT Bhopal].`;
 const typeP = document.getElementById('typewriter-p');
 let typeIndexP = 0;
 let currentHTML = "";
@@ -743,15 +884,16 @@ function typeWriterP() {
 }
 
 function typeWriter() {
-  if (typeIndex < hiText.length) {
-    if (hiText.codePointAt(typeIndex) > 0xFFFF) {
-      typeH1.textContent += String.fromCodePoint(hiText.codePointAt(typeIndex));
-      typeIndex += 2;
+  if (typeIndex < hiTextRaw.length) {
+    if (hiTextRaw.substring(typeIndex, typeIndex + 6) === "{NAME}") {
+      currentH1HTML += `<span class="name-swap"><span>Anmol</span><span>अनमोल</span></span>`;
+      typeIndex += 6;
     } else {
-      typeH1.textContent += hiText.charAt(typeIndex);
+      currentH1HTML += hiTextRaw.charAt(typeIndex);
       typeIndex++;
     }
-    setTimeout(typeWriter, 80);
+    typeH1.innerHTML = currentH1HTML;
+    setTimeout(typeWriter, 60);
   } else {
     setTimeout(typeWriterP, 300);
   }
