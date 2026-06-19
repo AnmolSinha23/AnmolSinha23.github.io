@@ -627,18 +627,48 @@ function startMeditation() {
 }
 
 
-// Initialize Lenis for smooth scrolling
-const lenis = new Lenis({
-  lerp: 0.15, // Higher lerp for snappier, more responsive wheel scroll
-  wheelMultiplier: 1.2,
-  smoothWheel: true
-});
+// Initialize Lenis for smooth scrolling ONLY on larger devices to save performance
+let lenis;
+if (window.innerWidth > 900) {
+  lenis = new Lenis({
+    lerp: 0.15,
+    wheelMultiplier: 1.2,
+    smoothWheel: true
+  });
 
-function raf(time) {
-  lenis.raf(time);
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
   requestAnimationFrame(raf);
+
+  lenis.on('scroll', (e) => {
+    if (!isDraggingPiston) {
+      updateScrollUI(e.progress);
+    }
+  });
+} else {
+  // Ultra-light mobile fallback
+  lenis = {
+    scrollTo: (target, options) => {
+      const offset = options?.offset || 0;
+      if (typeof target === 'string') {
+        const el = document.querySelector(target);
+        if (el) window.scrollTo({ top: el.offsetTop + offset, behavior: 'smooth' });
+      } else if (typeof target === 'number') {
+        window.scrollTo({ top: target, behavior: 'smooth' });
+      }
+    },
+    on: () => {}
+  };
+  
+  // Mobile needs a native scroll listener for scroll progress bar
+  window.addEventListener('scroll', () => {
+    if (!isDraggingPiston) {
+      updateScrollUI();
+    }
+  }, { passive: true });
 }
-requestAnimationFrame(raf);
 
 // --- Custom Scrollbar Logic ---
 const pistonTrack = document.getElementById('custom-scrollbar-track');
@@ -650,6 +680,8 @@ const progressBar = document.getElementById('scroll-progress');
 let isDraggingPiston = false;
 
 function updateScrollUI(progress) {
+  if (window.innerWidth <= 900) return; // Disable custom scrollbar on mobile
+  
   if (typeof progress === 'undefined' || isNaN(progress)) {
     const winScroll = window.scrollY;
     const height = document.documentElement.scrollHeight - window.innerHeight;
@@ -663,16 +695,16 @@ function updateScrollUI(progress) {
   }
   
   if (pistonTrack && pistonHead && pistonSpring) {
-    const trackHeight = pistonTrack.clientHeight;
-    const headHeight = pistonHead.clientHeight;
-    const maxTop = trackHeight - headHeight;
+    // Avoid clientHeight reads to prevent forced synchronous layout (lag)
+    // track height is calc(100vh - 8px), head height is 60px
+    const maxTop = window.innerHeight - 68;
     
     const currentTop = progress * maxTop;
-    pistonHead.style.transform = `translateY(${currentTop}px)`;
+    pistonHead.style.transform = `translate3d(0, ${currentTop}px, 0)`;
     
     // Scale spring based on progress
     const springScale = 1 - progress;
-    pistonSpring.style.transform = `scaleY(${Math.max(0.01, springScale)})`;
+    pistonSpring.style.transform = `scale3d(1, ${Math.max(0.01, springScale)}, 1)`;
   }
   
   if (releaseBtn) {
@@ -684,21 +716,19 @@ function updateScrollUI(progress) {
   }
 }
 
-lenis.on('scroll', (e) => {
-  if (!isDraggingPiston) {
-    updateScrollUI(e.progress);
-  }
-});
+// (Scroll listener is now handled in the lenis initialization block)
 
 // Force correct UI on load
 window.addEventListener('DOMContentLoaded', () => updateScrollUI());
 window.addEventListener('load', () => updateScrollUI());
+window.addEventListener('resize', () => updateScrollUI());
 
 // Interactivity for piston drag
 if (pistonHead && pistonTrack) {
   let startY, startProgress;
   
   pistonHead.addEventListener('mousedown', (e) => {
+    if (window.innerWidth <= 900) return; // Disable drag on mobile
     isDraggingPiston = true;
     startY = e.clientY;
     
@@ -711,9 +741,7 @@ if (pistonHead && pistonTrack) {
   window.addEventListener('mousemove', (e) => {
     if (!isDraggingPiston) return;
     
-    const trackHeight = pistonTrack.clientHeight;
-    const headHeight = pistonHead.clientHeight;
-    const maxTop = trackHeight - headHeight;
+    const maxTop = window.innerHeight - 68;
     const deltaY = e.clientY - startY;
     
     let newProgress = startProgress + (deltaY / maxTop);
@@ -804,20 +832,49 @@ window.dispatchEvent(new Event('scroll'));
 
 // btn interactions
 function handleEmailClick(btn) {
+  if (btn.dataset.state === "copied") return;
   const email = "anmol23sinha@gmail.com";
-  if (btn.dataset.state === "revealed") {
-    navigator.clipboard.writeText(email).catch(err => console.error('Clipboard copy failed:', err));
-    const previousHtml = btn.innerHTML;
-    btn.innerHTML = `✅ Copied!`;
-    btn.style.background = "var(--accent-green)";
-    setTimeout(() => {
-      btn.innerHTML = previousHtml;
-      btn.style.background = "";
-    }, 2000);
+  
+  if (btn.dataset.state === "confirm") {
+    navigator.clipboard.writeText(email).then(() => {
+      btn.dataset.state = "copied";
+      btn.innerHTML = `✅ COPIED!`;
+      btn.style.background = "var(--accent-green)";
+      
+      setTimeout(() => {
+        resetEmailBtn(btn);
+      }, 2500);
+    }).catch(err => {
+      console.error('Clipboard copy failed:', err);
+      btn.dataset.state = "copied";
+      btn.innerHTML = `❌ FAILED`;
+      setTimeout(() => {
+        resetEmailBtn(btn);
+      }, 2500);
+    });
   } else {
-    btn.dataset.state = "revealed";
-    btn.innerHTML = `${email} <span style="font-size:18px; margin-left:6px;" title="Copy to clipboard">📋</span>`;
+    btn.dataset.originalHtml = btn.innerHTML;
+    btn.dataset.originalBg = btn.style.background || "";
+    
+    btn.dataset.state = "confirm";
+    btn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" style="vertical-align:middle;margin-right:6px;"><path fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/><path fill="#fbc531" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M16 2H8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/></svg> COPY EMAIL`;
+    btn.style.background = "var(--bg-white)";
+    
+    btn.dataset.timeoutId = setTimeout(() => {
+      if (btn.dataset.state === "confirm") {
+        resetEmailBtn(btn);
+      }
+    }, 4000);
   }
+}
+
+function resetEmailBtn(btn) {
+  if (btn.dataset.originalHtml) {
+    btn.innerHTML = btn.dataset.originalHtml;
+    btn.style.background = btn.dataset.originalBg;
+  }
+  btn.dataset.state = "";
+  clearTimeout(btn.dataset.timeoutId);
 }
 
 document.getElementById('contact-btn-profile').addEventListener('click', function() { handleEmailClick(this); });

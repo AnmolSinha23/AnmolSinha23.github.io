@@ -27,11 +27,7 @@ html, body {
   color: var(--pure-black);
   overflow-x: clip;
 }
-body::before {
-  content: ''; position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.04; pointer-events: none; z-index: 9998;
-}
+/* Noise filter removed for performance on low-end devices */
 
 /* --- HIDE NATIVE SCROLLBAR --- */
 ::-webkit-scrollbar {
@@ -67,6 +63,7 @@ html, body {
   align-items: center;
   gap: 4px;
   transition: background 0.2s;
+  will-change: transform;
 }
 #piston-head:active {
   cursor: grabbing;
@@ -94,6 +91,7 @@ html, body {
   border-right: 2px solid var(--pure-black);
   z-index: 1;
   transform-origin: bottom;
+  will-change: transform;
 }
 #spring-release-btn {
   position: absolute;
@@ -139,6 +137,7 @@ html, body {
   border-right: 3px solid var(--pure-black);
   border-bottom: 3px solid var(--pure-black);
   border-bottom-right-radius: 4px;
+  will-change: width;
 }
 
 /* --- SIDEBAR --- */
@@ -177,8 +176,6 @@ html, body {
 }
 .nav-btn:active, .nav-btn.active {
   background: var(--accent-yellow);
-  transform: translate(4px, 4px) !important;
-  box-shadow: 0 0 0 var(--pure-black) !important;
 }
 .nav-date, .nav-clock {
   background: var(--accent-yellow);
@@ -197,12 +194,12 @@ html, body {
 /* --- GRID LAYOUT --- */
 .dashboard {
   margin: 40px auto;
-  padding-left: 280px;
-  padding-right: 24px;
-  width: 100%; max-width: 1480px;
+  padding-left: 260px; /* Reduced from 280px to shift closer to sidebar */
+  padding-right: 32px;
+  width: 100%; max-width: 1560px; /* Increased from 1480px for a broader layout */
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 32px;
+  grid-template-columns: 320px 1fr; /* Reduced from 380px to make right column broader */
+  gap: 40px; /* Increased gap slightly for better breathing room */
 }
 /* --- CARDS & WIDGETS --- */
 .brutal-card {
@@ -321,7 +318,7 @@ html, body {
   box-shadow: var(--shadow-sm);
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.btn-solid:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px 0px var(--pure-black); }
+/* Active state managed globally below */
 .btn-green { background: var(--accent-green); }
 .btn-red { background: var(--accent-red); }
 
@@ -355,17 +352,12 @@ html, body {
 .name-swap {
   display: inline-grid;
   grid-template-areas: "word";
-  background: var(--pure-black);
-  color: var(--bg-white);
-  padding: 0 12px;
-  border-radius: 8px;
-  transform: skew(-5deg);
   margin: 0 4px;
-  box-shadow: 4px 4px 0 var(--brand-primary);
   text-align: center;
   justify-items: center;
   align-items: center;
   line-height: 1.1;
+  color: var(--pure-black);
 }
 .name-swap > span {
   grid-area: word;
@@ -374,7 +366,7 @@ html, body {
 }
 .name-swap > span:nth-child(2) {
   animation-delay: -2s;
-  color: var(--accent-yellow);
+  color: var(--brand-primary);
 }
 @keyframes glitchWord {
   0%, 42% { opacity: 1; transform: translate(0, 0); }
@@ -550,13 +542,8 @@ body.meditate-mode .sidebar {
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease, box-shadow 0.6s ease, background 0.4s ease, filter 0.3s ease !important;
 }
 
-/* Fluid transition for interactive buttons */
-.btn-solid, .badge, .contact-icon {
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease !important;
-}
-
-/* Super smooth direct transitions for navbar buttons to eliminate lag and bounce */
-.nav-btn {
+/* Ultra-smooth, light, and responsive transitions for interactive buttons */
+.btn-solid, .badge, .contact-icon, .nav-btn, .stat-link {
   transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, background 0.15s ease-out !important;
 }
 
@@ -571,10 +558,20 @@ body.meditate-mode .sidebar {
 .contact-icon.gh { background: var(--bg-white); }
 .contact-icon.li { background: #0A66C2; color: var(--bg-white); }
 
-.btn-solid:hover, .badge:hover, .contact-icon:hover, .intro-card:hover, .terminal-card:hover, .section-card:hover, .profile-pic:hover {
+.intro-card:hover, .terminal-card:hover, .section-card:hover, .profile-pic:hover {
   transform: translateY(-6px) !important;
 }
-.btn-solid:active, .stat-link:active, .contact-icon:active { 
+
+.badge:hover {
+  transform: translateY(-4px) !important;
+}
+
+.btn-solid:hover, .nav-btn:hover, .stat-link:hover, .contact-icon:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 6px 6px 0 var(--pure-black) !important;
+}
+
+.btn-solid:active, .nav-btn:active, .nav-btn.active, .stat-link:active, .contact-icon:active { 
   transform: translate(4px, 4px) !important; 
   box-shadow: 0px 0px 0px var(--pure-black) !important; 
 }
@@ -589,6 +586,12 @@ body.meditate-mode .sidebar {
   .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; width: 100%; }
   .nav-btn { width: auto; flex: 1 1 calc(33% - 16px); min-width: 100px; }
   .dashboard { padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; width: 95%; max-width: 100%; }
+  
+  /* Hide custom scrollbar elements completely on mobile devices */
+  #custom-scrollbar-track, 
+  #scroll-progress-container {
+    display: none !important;
+  }
 }
 @media(max-width: 600px) {
   .nav-title { font-size: 20px; }
@@ -776,7 +779,7 @@ body.is-booting { overflow: hidden; height: 100vh; }
 .intro-card p { min-height: 100px; line-height: 1.6; }
 
 .terminal-ascii-wrapper {
-  display: flex; gap: 16px; margin-bottom: 16px;
+  display: flex; gap: 32px; margin-bottom: 16px;
   align-items: center; justify-content: center; flex-wrap: wrap;
 }
 
