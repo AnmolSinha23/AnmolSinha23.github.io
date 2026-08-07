@@ -6,7 +6,7 @@
 <meta name="description" content="Neo-brutalist interactive portfolio"/>
 <title>~/portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="is-booting">
@@ -17,14 +17,12 @@
 </div>
 
 <!-- CUSTOM PISTON SCROLLBAR -->
-<div id="custom-scrollbar-track">
+<div id="custom-scrollbar-track" aria-hidden="true">
   <div id="piston-head">
     <div class="piston-grip"></div>
     <div class="piston-grip"></div>
     <div class="piston-grip"></div>
   </div>
-  <div id="piston-spring"></div>
-  <button id="spring-release-btn">▲</button>
 </div>
 
 <!-- BOOT SEQUENCE OVERLAY -->
@@ -36,10 +34,10 @@
       GNU GRUB  version 2.06
     </div>
     <div class="grub-border">
-      <div class="grub-option grub-active" id="grub-opt-1">  Fedora Linux (AnmolSinha23)</div>
-      <div class="grub-option" id="grub-opt-2">  Advanced options for Fedora Linux</div>
+      <div class="grub-option grub-active" id="grub-opt-1">  CachyOS Linux (AnmolSinha23)</div>
+      <div class="grub-option" id="grub-opt-2">  UEFI Firmware Settings</div>
       <div class="grub-option" id="grub-opt-3">  Windows Boot Manager (on /dev/nvme0n1p1)</div>
-      <div class="grub-option" id="grub-opt-4">  UEFI Firmware Settings</div>
+      <div class="grub-option" id="grub-opt-4">  Advanced options for CachyOS Linux</div>
     </div>
     <div class="grub-footer">
       Use the ^ and v keys to select which entry is highlighted.<br>
@@ -50,13 +48,19 @@
 
   <!-- Stage 2: Graphical OS -->
   <div id="boot-os" style="display: none;">
-    <img src="red.png" alt="OS Logo" class="boot-logo">
+    <img src="red.webp" alt="OS Logo" class="boot-logo" loading="lazy">
     <div class="boot-name">Anmol Sinha</div>
     <div class="boot-spinner">
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    </div>
+<div class="win-spinner">
+  <div class="circle"><div class="dot"></div></div>
+  <div class="circle"><div class="dot"></div></div>
+  <div class="circle"><div class="dot"></div></div>
+  <div class="circle"><div class="dot"></div></div>
+  <div class="circle"><div class="dot"></div></div>
+</div>
   </div>
 </div>
+</div> <!-- Close #boot-sequence -->
 
 <!-- ERROR POPUP -->
 <div id="error-popup" class="brutal-card" style="display:none;">
@@ -77,13 +81,26 @@
     <a href="#contact" class="nav-btn">CONTACT</a>
   </div>
   <div class="nav-clock-container">
-    <div class="nav-date" id="nav-date"></div>
-    <div class="nav-clock" id="nav-clock"></div>
+    <div class="nav-date">
+      <svg viewBox="0 0 24 24" width="18" height="18" style="min-width:18px;">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="#fff" stroke="#000" stroke-width="2.5"/>
+        <path d="M3 10h18" stroke="#000" stroke-width="2.5"/>
+        <path d="M16 2v5M8 2v5" stroke="#e84118" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span id="nav-date-text"></span>
+    </div>
+    <div class="nav-clock">
+      <svg viewBox="0 0 24 24" width="18" height="18" style="min-width:18px;">
+        <circle cx="12" cy="12" r="9" fill="#fbc531" stroke="#000" stroke-width="2.5"/>
+        <path d="M12 7v5l3 3" stroke="#e84118" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span id="nav-clock-text"></span>
+    </div>
   </div>
 </nav>
 
 <!-- DASHBOARD GRID -->
-<div class="dashboard">
+<main class="dashboard">
 
   <!-- LEFT PROFILE CARD (FLIP CONTAINER) -->
   <div class="flip-container">
@@ -97,27 +114,27 @@
           <div class="finger"></div>
           <div class="finger"></div>
         </div>
-        <img src="red.png" class="profile-pic" alt="Pokemon Trainer Red" />
+        <img src="profile.jpg" class="profile-pic" alt="Anmol Sinha" />
         <div class="profile-name">ANMOL SINHA</div>
         <div class="profile-title">FULL_FLEDGED_LEARNER()</div>
         
         <div class="badges">
-          <div class="badge yellow"><span>[LOCATION]</span> IIIT BHOPAL, INDIA</div>
-          <div class="badge green"><span>[STATUS]</span> 1ST YEAR BTECH STUDENT</div>
-          <div class="badge blue"><span>[MISSION]</span> figuring out</div>
+          <div class="badge yellow"><span>LOCATION</span> IIIT BHOPAL, INDIA</div>
+          <div class="badge green"><span>STATUS</span> 2ND YEAR BTECH STUDENT</div>
+          <div class="badge blue"><span>MISSION</span> figuring out</div>
         </div>
         
         <div class="profile-btns">
           <button id="resume-btn" class="btn-solid btn-green">
-            <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M12 16l-5-5h3V4h4v7h3l-5 5z"/><path fill="#fbc531" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M5 18h14v3H5z"/></svg> 
+            <svg viewBox="0 0 24 24" width="24" height="24" style="margin-right:4px;"><path fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path fill="#fbc531" stroke="#000" stroke-width="2" d="M17 21v-8H7v8M7 3v5h8V3"/></svg> 
             DOWNLOAD_RESUME
           </button>
           <button id="contact-btn-profile" class="btn-solid btn-red">
-            <svg viewBox="0 0 24 24" width="24" height="24"><path fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M3 6h18v12H3z"/><path fill="#fbc531" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M3 6l9 6 9-6"/></svg> 
+            <svg viewBox="0 0 24 24" width="24" height="24" style="margin-right:4px;"><path d="M4 6h16v12H4z" fill="#fff" stroke="#000" stroke-width="2"/><path d="M4 6l8 6 8-6" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg> 
             CONTACT ME
           </button>
           <button id="flip-to-stats-btn" class="btn-solid btn-yellow">
-            <svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="14" width="5" height="7" fill="#e84118" stroke="#000" stroke-width="2"/><rect x="9.5" y="8" width="5" height="13" fill="#000" stroke="#000" stroke-width="2"/><rect x="16" y="2" width="5" height="19" fill="#4cd137" stroke="#000" stroke-width="2"/><path d="M1 22h22" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 12 C 2 12, 8 4, 12 4 C 16 4, 22 12, 22 12 C 22 12, 16 20, 12 20 C 8 20, 2 12, 2 12 Z" fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#e84118" stroke="#000" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="#000"/></svg>
             VIEW STATS
           </button>
         </div>
@@ -132,7 +149,7 @@
           <div class="finger"></div>
         </div>
         <h2 class="stats-heading">ANMOL SINHA</h2>
-        <img src="red.png" class="profile-pic profile-pic-back" alt="Pokemon Trainer Red" />
+        <img src="profile.jpg" class="profile-pic profile-pic-back" alt="Anmol Sinha" />
         
         <div class="profile-title" style="margin-bottom:16px;">COMPETITIVE PROFILES</div>
         
@@ -189,39 +206,75 @@
           <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
           <div class="title">root@anmol:~</div>
         </div>
-        <div id="term-body">
+        <div id="term-body" data-lenis-prevent>
           <div class="output-block terminal-ascii-wrapper">
             <pre class="terminal-ascii">
-             .',;::::;,'.
-         .';:cccccccccccc:;,.
-      .;cccccccccccccccccccccc;.
-    .:cccccccccccccccccccccccccc:.
-  .;ccccccccccccc;.:dddl:.;ccccccc;.
- .:ccccccccccccc;OWMKOOXMWd;ccccccc:.
-.:ccccccccccccc;KMMc;cc;xMMc:ccccccc:.
-,cccccccccccccc;MMM.;cc;;WW::cccccccc,
-:cccccccccccccc;MMM.;cccccccccccccccc:
-:ccccccc;oxOOOo;MMM0OOk.;cccccccccccc:
-cccccc:0MMKxdd:;MMMkddc.;cccccccccccc;
-ccccc:XM0';cccc;MMM.;cccccccccccccccc'
-ccccc;MMo;ccccc;MMW.;ccccccccccccccc;
-ccccc;0MNc.ccc.xMMd:ccccccccccccccc;
-cccccc;dNMWXXXWM0::cccccccccccccc:,
-cccccccc;.:odl:.;cccccccccccccc:,.
-:cccccccccccccccccccccccccccc:'.
-.:cccccccccccccccccccccc:;,..
-  '::cccccccccccccc::;,.
+                                             %................                                        
+                                        -.......:.+==:..:..:.....                                     
+                                     ++:..=#@@@@@-..+=:.:::..::::...                                  
+                                  . %*.+#+*:---..:++=--.......::::....                                
+                                  :::...+...-:.....-**::=@@@+....:-::...                              
+                                  %...+.-:.......@@#==:.-*=.:+=%*=:.:....                             
+                                #**...-:=*..:+@@@#...........#+%#+::::::..                            
+                               %++.:%+@#%@@@==....-=-.::::::.......::::::..                           
+                              %*#@.@@........-*@@#:.....=.....::::::::::::..                          
+                             =%.*@+*:*@#:.:=.....-@@*=+-.........::::::::::.                          
+                            *+=.::..:+::++..+#%#*+=-==*##@%@%%#*-..::::::::..                         
+                            +...=..*..:%@%*%*..==--==+==-==+-=*+--=:::::::::.                         
+                            *...+.:-.=%@@@@@@%#-+*+:::..:::--:-==+=--:::::-:.                         
+                            .::.:.::.-@@@%%%@@@-==:#%%%%@%%*+*=---:....:::+..                         
+                             ++.:.-..@@@@@@@@@@@@%**#%%@@@@@@%##+:.:+*-.:...                          
+                              #.....@...........@@@@@@%**:....::.+@@#%#...                            
+                               %..%#@#@@@@@@@*#*-+%%#+=%*...........=%@...                            
+                               @-.@@@@%#+-==::=%%%@@##@#=+@@@@@@@@@@@%@.#.                            
+                               =@-@@@@#:.#...@...:=@=.....@...:...=**+@.+.                            
+                               @@-@@@@@@@@@@@==+*@@@@*...:=%@@@%*=:-=+@.#.                            
+                               @@-@@@@@@@@@@@@@@@@@@@@::-:.:=+=+**+=-=@.=.                            
+                               #@@@@@@@@@@@@@@@@@@@@@@#*:%@+:-=++=++++@..                             
+                               %@@@@@@@@@@@@@@@@@@@@@@@@@.%@@@@%%%**+#@-:                             
+                               *%@@@@@@@@@@@@@@@@@@@@@@@@@:@@@@@@@#*+*=.                              
+                                  @@@@@@@@@@@@@@@@@@@@+*%@:@@@@@%*+=--..                              
+               @#%%              @@@@@@@@@@@@@#.::--::.:=--@@@@%+=*+.                                
+        @%%%%@@@@@%%%%%%%# #%%@ .@@@@@@@@@@@@@@%#.......:===@%#+=++=.                                
+    #%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@+.=@@*#@@@@@#=....-##+==*:                                 
+  @%@@@@@@@@@@@@@@@@@@@@@@@@#=%...@@@@@@@+..===*+......--:*:.+++=+@.                                 
+%%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@=...@@@@@@@@@@@@@@@@@@@@==-+++*++*@...=  #%#                          
+%@@@@@@@@@@@@@@@@@@@@@@@@@@@@=:...=-+@@@%@@@@@#-.......-+**++++#%.....-:--=-:+#...                   
+%@@@@@@@@@@@@@@@@@@@*@*@@#@@@@@@@@-.:%%@@@@%@@@@@@%%*=:::-++=*#-...:.:....--.-:.:.:-=+               
+%@@@@@@@@@@@@@@@@@+@%@@.@@%@-.@*@.@@..-:@@@@@@@@@@@@@@@@@=+*#*..+@*::..-:.+#*-:=+*=---...-%          
+%@@@@@@@@@@@@@@@@@#*@.@:%@@##..=@@@@@..#.:@@@@@@@@@@@@#+=#%#...::......-..*+..===::=-.:=-:--:-       
+%@@@@@@@@@@@@@@@%@@-@.@%.@@:.:-..#*@@@:+@:..+*#%#+=--==+=:...:::...=+@#=.-#:==--:-==--:=---:=+--:.   
+%@@@@@@@@@@@@@@@%@@@#.@@.@@%.@%%+@@#@@@:.@@...............::::....*:%:...+--+.:--:=::-+-.+-:=+###+-: 
+%@@@@@@@@@@@@@#*##@@%.@@.#@@.%@@:.**##%#..@+..:::.::::::::.....+@@@=:...-=.=-:-:-:+.....+#=@@@@@@@@@%
+%@@@@@@%@@@@%=*#=#@@..@:.-@@.++=%-:##*=%:..*=::::::........=-:@@@+-..::.=..==:.-:.:.+%@@@=@@@@@@@@@@#
+%@@@@@@@++@@@@*::.@@..#.-.@@..+*::-:**===:.===::::..#@#..@@.@@@*:...:::-+..==:.=:-%@*+@@#@@@@@@%%@@@%
+%@@@@@@@@@@@@%-#:.=@..++.:@@...:@=+-:=+:+.....:::.=@%:..@.:@@@....:::-.:=..==..#-=@@#@@@-@@@@@%#@@@@*
+%@@@@@@@@=.@@#.@@..@..-+.-@#=@#=.--+-+#...:::::::.+:.....@@@*...:::=.+.++..=-..=%#@*@@@=@@@@@%%@@@@@%
+%@@@@@%#%%=%@-.-@@.#..*:.=@+:@@@.+-*:=%:.:::::::::..:..-=.@...:::::.-=.+::.--..@@.@*@+@=@@@@%*@@@%%@*
+%@@#%@%*#%*%@*..@@:..=#..+@#:@@@....=*#:..:::::::::...@@@@...:::::.:+:.+::..=.-@@.@@@:@#@@@%#@@@@@@%*
+%@@@@#+%@@*:.=+-.-:.-@=..%@*:@@@@#....-::+::::::::..+-..+..::::::.-=-::*:..-@*@@@.@@+-@@@@@#@@@@@@%%#
+%@@@@@@*:#%%#+-:-=:.:#...@@:.@*@@@@:.:=-=-:::::::::*=-%-=..::.-=:-==-:-+:..+@-#*@.@@.-@#%@%@@@@@@%%@#
+%@@@@@@@%-:*+=---=:.-+=.:@@+-@+%@@@=......::::-:--:::.::.:=-:-=::---=.-=::.-@*%@@+.@.#@.@+%@@@@%%@@%%
+#@@@@@@%#%%.=*-=++::+=:.+@@%.@=-@@@@*%@@-...::-:.:-:-----::..==:::::-.*=::.-@%#%@#.@.#=+@#@@@%#@@@@@#
+#@@@%%%%*##+:.===..---:.-%@#.@@.#@#@@@@@@:.:.:..-----:-::-..-=::::-+=.*=::.:@@@#@@:@.=@+@@@@@%@@%@@@#
+#@@@@%#%##*=+::+:.-=---..*@@.%@::@%+@@@@@..*....:---:--::.:-=-:::--+..*=::.=%#%*#%..:.@.*@@#%@%@@@@@ 
+ =##%%#***+---.=:------..%@@..@@.%@%+**#@@@.@@@=.:::.:-:.:-=-::::-=+..*=-.:+@%@#@%:.:.%=@@.@@#@@@%## 
+   :--:...................:...-@...:...:=..=%%+.............................::-............=-**##*   
             </pre>
-            <div class="terminal-os-info">
-              <div class="terminal-os-header">root@portfolio-exp</div>
-              <div class="terminal-os-grid">
-                <span class="c-dim">OS:</span> <span>Fedora Linux 44 (KDE Plasma fan)</span>
-                <span class="c-dim">Host:</span> <span>portfolio-exp</span>
-                <span class="c-dim">Kernel:</span> <span>6.13.0-fc44.x86_64</span>
-                <span class="c-dim">Shell:</span> <span>bash 5.2.26</span>
-              </div>
-              <br>
-              Type <span class="c-green">help</span> to begin.
+            <div class="terminal-os-info" style="white-space: pre; line-height: 1.6; padding-top: 10px;">
+<span class="c-green c-bold">anmol@portfolio</span> <span class="c-dim">---------------------------</span>
+<span class="c-peach">OS:</span> ........................... <span class="c-sub">Cachy OS (KDE Plasma)</span>
+<span class="c-peach">Uptime:</span> ....................... <span class="c-sub" id="terminal-uptime">Loading...</span>
+<span class="c-peach">IDE:</span> .......................... <span class="c-sub">VS Code</span>
+
+<span class="c-peach">Languages.Programming:</span> ........ <span class="c-sub">C, C++, Python, JavaScript</span>
+<span class="c-peach">Languages.Computer:</span> ........... <span class="c-sub">HTML, CSS, SQL</span>
+<span class="c-peach">Languages.Real:</span> ............... <span class="c-sub">English, Hindi</span>
+
+<span class="c-peach">Hobbies.Software:</span> ............. <span class="c-sub">Competitive Programming</span>
+<span class="c-peach">Hobbies.Hardware:</span> ............. <span class="c-sub">Custom Keyboards</span>
+
+<br>Type <span class="c-green">help</span> to begin.
             </div>
           </div>
           <div id="input-line" class="prompt-line">
@@ -333,8 +386,7 @@ cccccccc;.:odl:.;cccccccccccccc:,.
               <circle cx="50" cy="50" r="14" fill="#e84118" stroke="#000" stroke-width="4"/>
             </svg>
             
-            <h3 class="experience-title">Loading...</h3>
-            <p class="experience-desc">Currently building foundation as a 1st-year B.Tech student.</p>
+            <h3 class="experience-title">IN PROGRESS</h3>
           </div>
 
         </div>
@@ -346,28 +398,29 @@ cccccccc;.:odl:.;cccccccccccccc:,.
       <div class="brutal-card section-card bg-yellow center-text io-hidden">
         <h2>Contact Me</h2>
         <p class="contact-desc">Let's build something awesome together.</p>
-        <button id="contact-btn-main" class="btn-solid btn-blue contact-btn-style">✉ Send me an Email</button>
+        <button id="contact-btn-main" class="btn-solid btn-blue contact-btn-style">
+          <svg viewBox="0 0 24 24" width="24" height="24" style="vertical-align:middle;margin-right:8px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" fill="#fff" stroke="#000" stroke-width="2"/><path d="M22 6l-10 7L2 6" fill="none" stroke="#000" stroke-width="2"/></svg>
+          CONTACT ME
+        </button>
         <div class="contact-links-wrapper">
           <a href="https://github.com/AnmolSinha23" target="_blank" aria-label="GitHub" class="contact-icon gh">
-            <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="#fff" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
           </a>
           <a href="https://www.linkedin.com/in/anmol-sinha-4a2b391b7" target="_blank" aria-label="LinkedIn" class="contact-icon li">
-            <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="#fff" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
           </a>
         </div>
       </div>
     </section>
 
+  </div> <!-- close right-col -->
 
-
-  </div>
-
-</div>
+</main> <!-- close dashboard -->
 
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
 
-<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script src="script.js"></script>
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
+<script src="script.js" defer></script>
 </body>
 </html>

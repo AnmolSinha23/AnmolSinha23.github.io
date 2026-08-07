@@ -1,10 +1,14 @@
+const CONFIG = {
+  mobileBreakpoint: 900
+};
+
 // Prevent browser from restoring scroll position on page refresh
 if ('scrollRestoration' in window.history) { window.history.scrollRestoration = 'manual'; }
 window.scrollTo(0, 0);
 
 // --- Update Navbar Date & Clock ---
-const navDateEl = document.getElementById('nav-date');
-const navClockEl = document.getElementById('nav-clock');
+const navDateEl = document.getElementById('nav-date-text');
+const navClockEl = document.getElementById('nav-clock-text');
 
 function updateSidebarTime() {
   const now = new Date();
@@ -18,40 +22,94 @@ function updateSidebarTime() {
   const ss = String(now.getSeconds()).padStart(2, '0');
   navClockEl.textContent = `${hh}:${mins}:${ss}`;
 }
+
+function updateTerminalUptime() {
+  const birthDate = new Date('2005-08-23T00:00:00');
+  const now = new Date();
+  
+  let years = now.getFullYear() - birthDate.getFullYear();
+  let months = now.getMonth() - birthDate.getMonth();
+  let days = now.getDate() - birthDate.getDate();
+  
+  if (days < 0) {
+    months--;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  
+  const uptimeEl = document.getElementById('terminal-uptime');
+  if (uptimeEl) {
+    uptimeEl.textContent = `${years} years, ${months} months, ${days} days`;
+  }
+}
+
 updateSidebarTime();
-setInterval(updateSidebarTime, 1000);
+updateTerminalUptime();
+setInterval(() => {
+  updateSidebarTime();
+  updateTerminalUptime();
+}, 1000);
 
 // boot screen animation
 window.addEventListener('load', () => {
   const bootSeq = document.getElementById('boot-sequence');
   if (!bootSeq) return;
 
+  const grub = document.getElementById('boot-grub');
+  const os = document.getElementById('boot-os');
+  const skipBtn = document.getElementById('skip-boot-btn');
+
   // Session Memory Check
-  if (sessionStorage.getItem('hasBooted') === 'true') {
-    bootSeq.style.display = 'none';
-    bootSeq.remove();
-    document.body.classList.remove('is-booting');
-    window.dispatchEvent(new Event('scroll'));
-    return; // instantly skip if already booted this session
+  let hasBooted = false;
+  try {
+    hasBooted = sessionStorage.getItem('hasBooted') === 'true';
+  } catch(e) {}
+
+  if (hasBooted) {
+    // Fast boot sequence to prevent "glitch" feeling
+    const grubHeader = grub.querySelector('.grub-header');
+    const grubBorder = grub.querySelector('.grub-border');
+    const grubFooter = grub.querySelector('.grub-footer');
+    
+    if (grubHeader) grubHeader.textContent = "FAST BOOT INITIATED...";
+    if (grubBorder) grubBorder.innerHTML = "<div style='text-align: center; color: #4cd137; padding: 40px 20px; font-weight: bold;'>Resuming previous session from memory...<br><br>[ OK ] Kernel loaded.<br>[ OK ] Modules loaded.</div>";
+    if (grubFooter) grubFooter.style.display = 'none';
+    if (skipBtn) skipBtn.style.display = 'none';
+    
+    setTimeout(() => {
+      bootSeq.style.opacity = '0';
+      bootSeq.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        bootSeq.remove();
+        document.body.classList.remove('is-booting');
+        if (typeof updateScrollMetrics === 'function') updateScrollMetrics();
+        window.dispatchEvent(new Event('scroll'));
+        if (typeof updateScrollUI === 'function') updateScrollUI();
+      }, 500);
+    }, 800);
+    return; // skip full boot
   }
 
   const opt1 = document.getElementById('grub-opt-1');
   const opt2 = document.getElementById('grub-opt-2');
   const opt3 = document.getElementById('grub-opt-3');
-  const grub = document.getElementById('boot-grub');
-  const os = document.getElementById('boot-os');
-  const skipBtn = document.getElementById('skip-boot-btn');
-
   let skipTimeout;
   
   function skipBoot() {
     clearTimeout(skipTimeout);
-    sessionStorage.setItem('hasBooted', 'true');
+    try { sessionStorage.setItem('hasBooted', 'true'); } catch(e) {}
     bootSeq.style.opacity = '0';
     setTimeout(() => {
       bootSeq.remove();
       document.body.classList.remove('is-booting');
+      if (typeof updateScrollMetrics === 'function') updateScrollMetrics();
       window.dispatchEvent(new Event('scroll'));
+      if (typeof updateScrollUI === 'function') updateScrollUI();
     }, 300);
   }
 
@@ -61,22 +119,40 @@ window.addEventListener('load', () => {
 
   // simulate arrow keys down
   setTimeout(() => {
-    if (sessionStorage.getItem('hasBooted')) return;
+    let booted = false; try { booted = sessionStorage.getItem('hasBooted'); } catch(e) {}
+    if (booted) return;
     opt1.classList.remove('grub-active');
     opt2.classList.add('grub-active');
   }, 600);
 
   setTimeout(() => {
-    if (sessionStorage.getItem('hasBooted')) return;
+    let booted = false; try { booted = sessionStorage.getItem('hasBooted'); } catch(e) {}
+    if (booted) return;
     opt2.classList.remove('grub-active');
     opt3.classList.add('grub-active');
   }, 800);
 
   // hit enter and show gui
   setTimeout(() => {
-    if (sessionStorage.getItem('hasBooted')) return;
-    grub.style.display = 'none';
-    os.style.display = 'flex';
+    let booted = false; try { booted = sessionStorage.getItem('hasBooted'); } catch(e) {}
+    if (booted) return;
+    
+    // Smooth transition out for GRUB
+    grub.style.opacity = '0';
+    grub.style.transform = 'scale(0.98)';
+    
+    setTimeout(() => {
+      grub.style.display = 'none';
+      os.style.display = 'flex';
+      
+      // Force reflow to trigger CSS transition
+      void os.offsetWidth;
+      
+      // Smooth transition in for OS
+      os.style.opacity = '1';
+      os.style.transform = 'scale(1)';
+    }, 500);
+
     skipBtn.style.color = '#fff'; // adjust button contrast against black bg
     skipBtn.style.background = '#000';
     skipBtn.style.borderColor = '#fff';
@@ -84,7 +160,8 @@ window.addEventListener('load', () => {
 
   // fade out automatically
   skipTimeout = setTimeout(() => {
-    if (!sessionStorage.getItem('hasBooted')) skipBoot();
+    let booted = false; try { booted = sessionStorage.getItem('hasBooted'); } catch(e) {}
+    if (!booted) skipBoot();
   }, 4300);
 });
 
@@ -199,13 +276,13 @@ const history = [];
 let histIdx = -1;
 let validCommandCount = 0;
 
-const WELCOME = `<span class="c-lavender c-bold"> Portfolio OS v1.0.0 (tty1)</span>
+const WELCOME = `<span class="c-lavender c-bold"> Portfolio OS v1.1.0</span>
 <span class="c-dim"> Type </span><span class="c-green">help</span><span class="c-dim"> to see available commands.</span>
 `;
-printOutput('', WELCOME);
+printOutput('', WELCOME, true);
 
 document.querySelector('.terminal-card').addEventListener('click', (e) => {
-  if (window.innerWidth > 900) {
+  if (window.innerWidth > CONFIG.mobileBreakpoint) {
     cmdInput.focus();
   }
 });
@@ -238,9 +315,11 @@ function processCommand(cmd, raw) {
   if (awaitingPlayerName) {
     currentPlayer = raw.trim();
     if (currentPlayer) {
-      let players = JSON.parse(localStorage.getItem('dino_players') || '[]');
-      players.push({ name: currentPlayer, date: new Date().toLocaleString() });
-      localStorage.setItem('dino_players', JSON.stringify(players));
+      try {
+        let players = JSON.parse(localStorage.getItem('dino_players') || '[]');
+        players.push({ name: currentPlayer, date: new Date().toLocaleString() });
+        localStorage.setItem('dino_players', JSON.stringify(players));
+      } catch (e) {}
     }
     
     awaitingPlayerName = false;
@@ -297,7 +376,7 @@ function processCommand(cmd, raw) {
   printOutput(raw, `<span class="c-red">command not found:</span> ${escapeHtml(raw)}\n<span class="c-dim">Type </span><span class="c-green">help</span><span class="c-dim"> for available commands.</span>`);
 }
 
-function printOutput(echoCmd, html) {
+function printOutput(echoCmd, html, skipScroll = false) {
   const block = document.createElement('div');
   block.className = 'output-block';
   if (echoCmd) {
@@ -306,7 +385,9 @@ function printOutput(echoCmd, html) {
     block.innerHTML = html;
   }
   termBody.insertBefore(block, inputLine);
-  scrollToBottom();
+  if (!skipScroll) {
+    scrollToBottom();
+  }
 }
 
 function scrollToBottom() {
@@ -482,7 +563,7 @@ function startGame() {
     canvas.removeEventListener('touchstart', touchHandler);
     canvas.removeEventListener('mousedown', touchHandler);
     inputLine.style.display = 'flex';
-    if (window.innerWidth > 900) {
+    if (window.innerWidth > CONFIG.mobileBreakpoint) {
       cmdInput.focus();
     }
     
@@ -615,7 +696,7 @@ function startMeditation() {
       setTimeout(() => {
         document.body.classList.remove('meditate-mode');
         cmdInput.disabled = false;
-        if (window.innerWidth > 900) {
+        if (window.innerWidth > CONFIG.mobileBreakpoint) {
           cmdInput.focus();
         }
         text.style.animation = 'none';
@@ -629,7 +710,7 @@ function startMeditation() {
 
 // Initialize Lenis for smooth scrolling ONLY on larger devices to save performance
 let lenis;
-if (window.innerWidth > 900) {
+if (window.innerWidth > CONFIG.mobileBreakpoint) {
   lenis = new Lenis({
     lerp: 0.15,
     wheelMultiplier: 1.2,
@@ -673,46 +754,65 @@ if (window.innerWidth > 900) {
 // --- Custom Scrollbar Logic ---
 const pistonTrack = document.getElementById('custom-scrollbar-track');
 const pistonHead = document.getElementById('piston-head');
-const pistonSpring = document.getElementById('piston-spring');
-const releaseBtn = document.getElementById('spring-release-btn');
 const progressBar = document.getElementById('scroll-progress');
 
 let isDraggingPiston = false;
 
+let cachedInnerWidth = window.innerWidth;
+let cachedWinHeight = window.innerHeight;
+let cachedDocHeight = document.documentElement.scrollHeight;
+
+function updateScrollMetrics() {
+  cachedInnerWidth = window.innerWidth;
+  cachedWinHeight = window.innerHeight;
+  cachedDocHeight = document.documentElement.scrollHeight;
+}
+window.addEventListener('resize', updateScrollMetrics);
+window.addEventListener('load', updateScrollMetrics);
+// Delayed update to ensure fonts/images are loaded
+setTimeout(updateScrollMetrics, 1000);
+
+let isScrollUIUpdating = false;
 function updateScrollUI(progress) {
-  if (window.innerWidth <= 900) return; // Disable custom scrollbar on mobile
+  if (isScrollUIUpdating) return;
+  isScrollUIUpdating = true;
+  requestAnimationFrame(() => {
+    _updateScrollUI(progress);
+    isScrollUIUpdating = false;
+  });
+}
+
+function _updateScrollUI(progress) {
+  if (cachedInnerWidth <= CONFIG.mobileBreakpoint) return; // Disable custom scrollbar on mobile
   
-  if (typeof progress === 'undefined' || isNaN(progress)) {
+  if (document.body.classList.contains('is-booting')) {
+    progress = 0;
+  } else {
+    const height = cachedDocHeight - cachedWinHeight;
     const winScroll = window.scrollY;
-    const height = document.documentElement.scrollHeight - window.innerHeight;
-    progress = height > 0 ? winScroll / height : 0;
+    
+    if (!isDraggingPiston && (height <= 0 || winScroll <= 0)) {
+      progress = 0;
+    } else if (!isDraggingPiston && winScroll >= height) {
+      progress = 1;
+    } else if (typeof progress === 'undefined' || isNaN(progress)) {
+      progress = winScroll / height;
+    }
   }
   
-  progress = Math.max(0, Math.min(1, progress));
+  progress = Math.max(0, Math.min(1, progress || 0));
   
   if (progressBar) {
     progressBar.style.width = `${progress * 100}%`;
   }
   
-  if (pistonTrack && pistonHead && pistonSpring) {
+  if (pistonTrack && pistonHead) {
     // Avoid clientHeight reads to prevent forced synchronous layout (lag)
     // track height is calc(100vh - 8px), head height is 60px
-    const maxTop = window.innerHeight - 68;
+    const maxTop = cachedWinHeight - 68;
     
     const currentTop = progress * maxTop;
     pistonHead.style.transform = `translate3d(0, ${currentTop}px, 0)`;
-    
-    // Scale spring based on progress
-    const springScale = 1 - progress;
-    pistonSpring.style.transform = `scale3d(1, ${Math.max(0.01, springScale)}, 1)`;
-  }
-  
-  if (releaseBtn) {
-    if (progress > 0.99) {
-      releaseBtn.classList.add('visible');
-    } else {
-      releaseBtn.classList.remove('visible');
-    }
   }
 }
 
@@ -728,7 +828,7 @@ if (pistonHead && pistonTrack) {
   let startY, startProgress;
   
   pistonHead.addEventListener('mousedown', (e) => {
-    if (window.innerWidth <= 900) return; // Disable drag on mobile
+    if (window.innerWidth <= CONFIG.mobileBreakpoint) return; // Disable drag on mobile
     isDraggingPiston = true;
     startY = e.clientY;
     
@@ -756,18 +856,6 @@ if (pistonHead && pistonTrack) {
   window.addEventListener('mouseup', () => {
     isDraggingPiston = false;
     document.body.style.userSelect = '';
-  });
-}
-
-// Release button logic
-if (releaseBtn) {
-  releaseBtn.addEventListener('click', () => {
-    // Real physics: Explosive spring release curve (ExpoOut)
-    // Immense initial acceleration that smoothly dampens, perfectly tracking the piston
-    lenis.scrollTo(0, {
-      duration: 1.0,
-      easing: (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t)
-    });
   });
 }
 
@@ -832,32 +920,24 @@ window.dispatchEvent(new Event('scroll'));
 
 // btn interactions
 function handleEmailClick(btn) {
-  if (btn.dataset.state === "copied") return;
+  if (btn.dataset.state === "sent") return;
   const email = "anmol23sinha@gmail.com";
   
   if (btn.dataset.state === "confirm") {
-    navigator.clipboard.writeText(email).then(() => {
-      btn.dataset.state = "copied";
-      btn.innerHTML = `✅ COPIED!`;
-      btn.style.background = "var(--accent-green)";
-      
-      setTimeout(() => {
-        resetEmailBtn(btn);
-      }, 2500);
-    }).catch(err => {
-      console.error('Clipboard copy failed:', err);
-      btn.dataset.state = "copied";
-      btn.innerHTML = `❌ FAILED`;
-      setTimeout(() => {
-        resetEmailBtn(btn);
-      }, 2500);
-    });
+    window.location.href = `mailto:${email}`;
+    btn.dataset.state = "sent";
+    btn.innerHTML = `✅ OPENING MAIL...`;
+    btn.style.background = "var(--accent-green)";
+    
+    setTimeout(() => {
+      resetEmailBtn(btn);
+    }, 2500);
   } else {
     btn.dataset.originalHtml = btn.innerHTML;
     btn.dataset.originalBg = btn.style.background || "";
     
     btn.dataset.state = "confirm";
-    btn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" style="vertical-align:middle;margin-right:6px;"><path fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/><path fill="#fbc531" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M16 2H8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/></svg> COPY EMAIL`;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" style="vertical-align:middle;margin-right:6px;"><path fill="#fbc531" stroke="#000" stroke-width="2" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> SEND A MAIL`;
     btn.style.background = "var(--bg-white)";
     
     btn.dataset.timeoutId = setTimeout(() => {
@@ -980,7 +1060,9 @@ document.querySelectorAll('.io-hidden').forEach(el => {
 /* --- ACHIEVEMENT TOAST SYSTEM --- */
 class AchievementManager {
   constructor() {
-    this.unlocked = JSON.parse(localStorage.getItem('portfolio_achievements') || '[]');
+    let saved = '[]';
+    try { saved = localStorage.getItem('portfolio_achievements') || '[]'; } catch(e) {}
+    this.unlocked = JSON.parse(saved);
     this.container = document.getElementById('toast-container');
   }
 
@@ -988,7 +1070,7 @@ class AchievementManager {
     if (this.unlocked.includes(id)) return;
     
     this.unlocked.push(id);
-    localStorage.setItem('portfolio_achievements', JSON.stringify(this.unlocked));
+    try { localStorage.setItem('portfolio_achievements', JSON.stringify(this.unlocked)); } catch(e) {}
     
     if (!this.container) return; // safety check
     
