@@ -225,17 +225,18 @@ const portfolioData = {
 
   <span class="c-blue c-bold">University</span> <span class="c-dim">│</span> IIIT BHOPAL
   <span class="c-blue c-bold">Degree</span>     <span class="c-dim">│</span> B.Tech in CS
-  <span class="c-blue c-bold">Year</span>       <span class="c-dim">│</span> 1st Yr (Grad: 2029)
+  <span class="c-blue c-bold">Year</span>       <span class="c-dim">│</span> 2nd Yr (Grad: 2029)
 
 <span class="c-teal c-bold">  Performance:</span>
   <span class="c-dim">├──</span> 10th (CBSE): 99.4%
   <span class="c-dim">└──</span> 12th (CBSE): 86.4% <span class="c-red">(Crazy downfall ik!)</span>
 
 <span class="c-teal c-bold">  Coursework:</span>
-  <span class="c-dim">├──</span> DSA
-  <span class="c-dim">├──</span> Discrete Mathematics
-  <span class="c-dim">├──</span> Operating Systems
-  <span class="c-dim">└──</span> Computer Networks
+  <span class="c-dim">├──</span> FLAT (Formal Language & Automata Theory)
+  <span class="c-dim">├──</span> DAA (Design and Analysis of Algorithms)
+  <span class="c-dim">├──</span> DBMS (Database Management Systems)
+  <span class="c-dim">├──</span> SCS (Signals and Communication Systems)
+  <span class="c-dim">└──</span> COA (Computer Organization and Architecture)
 `,
 
   // ─── SKILLS ────────────────────────────────────────────────────────
